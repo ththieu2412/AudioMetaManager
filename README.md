@@ -33,24 +33,6 @@ python src/main.py
 
 You can customize the input folder in main.py to process your own audio files.
 
-## 📦 Project Structure
-
-AudioMetaManager/
-  |
-  +- src/
-  |   +- extractor.py    # Metadata extraction module
-  |   +- database.py     # Database management module
-  |   +- main.py         # Entry point
-  |
-  +- samples/            # Sample audio files
-  |
-  +- docs/               # Project documentation
-  |
-  +- requirements.txt    # Required Python packages
-  +- .gitignore          # Files/folders to ignore by Git
-  +- README.md           # Project overview
-
-
 ## 📚 References
 
 This project was built based on academic papers and real-world Python libraries related to audio metadata extraction and multimedia database systems.

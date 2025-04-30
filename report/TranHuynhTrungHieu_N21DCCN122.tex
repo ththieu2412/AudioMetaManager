@@ -34,6 +34,15 @@ Trong lĩnh vực cơ sở dữ liệu đa phương tiện, việc quản lý v�
 
 
 \section{GIỚI THIỆU}
+Trong thời đại số hóa hiện nay, dữ liệu đa phương tiện – đặc biệt là âm thanh – ngày càng trở nên phổ biến và quan trọng trong nhiều lĩnh vực như truyền thông, giải trí, giáo dục và lưu trữ số. Để quản lý hiệu quả dữ liệu âm thanh, việc gắn kèm metadata (siêu dữ liệu) nhằm mô tả đặc trưng của tệp âm thanh (ví dụ: tiêu đề, nghệ sĩ, thể loại, thời lượng, năm phát hành, v.v.) là yếu tố then chốt. Metadata giúp cải thiện khả năng tìm kiếm, phân loại và truy xuất thông tin âm thanh một cách hiệu quả hơn [1].
+
+Các chuẩn metadata phổ biến hiện nay như ID3 (MP3), Vorbis Comment (OGG), hoặc Xiph Comments trong FLAC đóng vai trò thiết yếu trong việc lưu trữ thông tin ngữ cảnh đi kèm với nội dung âm thanh [2]. Tuy nhiên, việc thiếu nhất quán giữa các chuẩn này gây khó khăn trong quá trình quản lý đồng bộ. Hơn nữa, nhiều tệp âm thanh trên thực tế bị thiếu hoặc sai lệch thông tin metadata, gây ảnh hưởng đến chất lượng khai thác dữ liệu.
+
+Để giải quyết vấn đề này, các công cụ trích xuất và chỉnh sửa metadata tự động đã được nghiên cứu và triển khai. Một hướng tiếp cận phổ biến là sử dụng các thư viện mã nguồn mở như Mutagen – một công cụ mạnh mẽ trong hệ sinh thái Python, cho phép thao tác trực tiếp lên metadata của nhiều định dạng âm thanh khác nhau một cách linh hoạt và hiệu quả [3]. Bên cạnh đó, các kỹ thuật học máy và khai phá dữ liệu web cũng đã được áp dụng trong việc tự động bổ sung hoặc khôi phục metadata còn thiếu [4].
+
+Tuy nhiên, để khai thác tốt metadata sau khi trích xuất, cần có một hệ thống cơ sở dữ liệu đa phương tiện phù hợp – nơi dữ liệu âm thanh cùng metadata được lưu trữ có cấu trúc và hỗ trợ các truy vấn hiệu quả. Các nghiên cứu gần đây về hệ quản trị cơ sở dữ liệu đa phương tiện (MMDBMS) đã chỉ ra những yêu cầu đặc thù như lưu trữ linh hoạt, hỗ trợ dữ liệu không đồng nhất, và khả năng mở rộng [5].
+
+Vì vậy, đề tài này tập trung triển khai giải pháp trích xuất và quản lý metadata âm thanh bằng ngôn ngữ lập trình Python, sử dụng thư viện Mutagen kết hợp với thiết kế mô hình cơ sở dữ liệu đa phương tiện phù hợp. Giải pháp hướng đến khả năng ứng dụng thực tiễn trong việc tổ chức, tìm kiếm và khai thác thông tin từ tập hợp lớn các tệp âm thanh số.
 
 
 \section{MÔ TẢ VẤN ĐỀ}
@@ -56,6 +65,24 @@ Trong lĩnh vực cơ sở dữ liệu đa phương tiện, việc quản lý v�
 \section{DỮ LIỆU BỔ SUNG}
 
 \section{TÀI LIỆU THAM KHẢO}
+\begin{thebibliography}{1}
+
+\bibitem{downie2003}
+J. S. Downie, ``Music information retrieval,'' \textit{Annual Review of Information Science and Technology}, vol. 37, no. 1, pp. 295--340, 2003.
+
+\bibitem{ieee2010}
+``An overview of audio metadata standards,'' \textit{IEEE Communications Surveys \& Tutorials}, 2010.
+
+\bibitem{mutagen}
+Mutagen Python Library, \textit{Online}. Available: https://github.com/quodlibet/mutagen.
+
+\bibitem{schedl2011}
+M. Schedl, ``A music information system automatically generated via web content mining,'' \textit{Information Processing \& Management}, vol. 47, no. 3, pp. 426--439, 2011.
+
+\bibitem{ghafoor1995}
+A. Ghafoor \textit{et al.}, ``Multimedia database management systems,'' \textit{ACM Computing Surveys (CSUR)}, vol. 27, no. 4, pp. 627--629, 1995.
+
+\end{thebibliography}
 
 
 \end{document}

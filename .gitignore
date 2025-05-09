@@ -42,3 +42,9 @@ env/
 # Windows
 Thumbs.db
 desktop.ini
+
+#report
+report/*.aux
+report/*.fdb_latexmk
+report/*.fls
+report/*.log

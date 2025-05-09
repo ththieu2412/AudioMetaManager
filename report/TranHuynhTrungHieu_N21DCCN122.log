@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (MiKTeX 25.4) (preloaded format=pdflatex 2025.4.28)  30 APR 2025 14:45
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (MiKTeX 25.4) (preloaded format=pdflatex 2025.4.28)  9 MAY 2025 12:08
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -379,26 +379,26 @@ File: l3backend-pdftex.def 2025-03-14 L3 backend support: PDF output (pdfTeX)
 ) (TranHuynhTrungHieu_N21DCCN122.aux)
 \openout1 = `TranHuynhTrungHieu_N21DCCN122.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 14.
-LaTeX Font Info:    ... okay on input line 14.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 14.
-LaTeX Font Info:    ... okay on input line 14.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 14.
-LaTeX Font Info:    ... okay on input line 14.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 14.
-LaTeX Font Info:    ... okay on input line 14.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 14.
-LaTeX Font Info:    ... okay on input line 14.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 14.
-LaTeX Font Info:    ... okay on input line 14.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 14.
-LaTeX Font Info:    ... okay on input line 14.
-LaTeX Font Info:    Checking defaults for T5/cmr/m/n on input line 14.
-LaTeX Font Info:    Trying to load font information for T5+cmr on input line 14.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 15.
+LaTeX Font Info:    ... okay on input line 15.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 15.
+LaTeX Font Info:    ... okay on input line 15.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 15.
+LaTeX Font Info:    ... okay on input line 15.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 15.
+LaTeX Font Info:    ... okay on input line 15.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 15.
+LaTeX Font Info:    ... okay on input line 15.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 15.
+LaTeX Font Info:    ... okay on input line 15.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 15.
+LaTeX Font Info:    ... okay on input line 15.
+LaTeX Font Info:    Checking defaults for T5/cmr/m/n on input line 15.
+LaTeX Font Info:    Trying to load font information for T5+cmr on input line 15.
  (C:\Users\trung\AppData\Local\Programs\MiKTeX\tex/latex/vntex\t5cmr.fd
 File: t5cmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
 )
-LaTeX Font Info:    ... okay on input line 14.
+LaTeX Font Info:    ... okay on input line 15.
 
 -- Lines per column: 56 (exact).
 (C:\Users\trung\AppData\Local\Programs\MiKTeX\tex/context/base/mkii\supp-pdf.mkii
@@ -420,11 +420,57 @@ Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 48
  (C:\Users\trung\AppData\Local\Programs\MiKTeX\tex/latex/00miktex\epstopdf-sys.cfg
 File: epstopdf-sys.cfg 2021/03/18 v2.0 Configuration of epstopdf for MiKTeX
 ))
+LaTeX Font Info:    Trying to load font information for T5+pcr on input line 42.
+ (C:\Users\trung\AppData\Local\Programs\MiKTeX\tex/latex/vntex\t5pcr.fd
+File: t5ucr.fd 2005/08/24 Fontinst v1.929 font definitions for T5/pcr.
+)
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 77--78
+
+[1{C:/Users/trung/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}{C:/Users/trung/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/vntex/t5.enc}
+
+
+]
+
+LaTeX Font Info:    Font shape `T5/pcr/m/it' in size <10> not available
+(Font)              Font shape `T5/pcr/m/sl' tried instead on input line 84.
+
+
+[2]
+
+LaTeX Font Info:    Trying to load font information for U+msa on input line 138.
+(C:\Users\trung\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsa.fd
+File: umsa.fd 2013/01/14 v3.01 AMS symbols A
+)
+LaTeX Font Info:    Trying to load font information for U+msb on input line 138.
+ (C:\Users\trung\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsb.fd
+File: umsb.fd 2013/01/14 v3.01 AMS symbols B
+)
+
+[3]
+
+
+
+[4]
+
+
+
+[5]
+Overfull \hbox (256.58446pt too wide) in paragraph at lines 277--283
+ [][] 
+ []
+
+
+Overfull \hbox (6.0pt too wide) in paragraph at lines 275--286
+ [][] 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 318--319
 []\T5/ptm/m/n/8 Mutagen Python Li-brary, \T5/ptm/m/it/8 On-line\T5/ptm/m/n/8 . Avail-able:
  []
+
+
 
 
 ** Conference Paper **
@@ -439,27 +485,24 @@ Before submitting the final camera ready copy, remember to:
 
 
 
-[1{C:/Users/trung/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}{C:/Users/trung/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/vntex/t5.enc}
-
-
-] (TranHuynhTrungHieu_N21DCCN122.aux)
+[6] (TranHuynhTrungHieu_N21DCCN122.aux)
  ***********
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2025-03-26>
  ***********
  ) 
 Here is how much of TeX's memory you used:
- 4275 strings out of 469959
- 66210 string characters out of 5469834
- 449706 words of memory out of 5000000
- 31045 multiletter control sequences out of 15000+600000
- 741578 words of font info for 121 fonts, out of 8000000 for 9000
+ 4386 strings out of 469959
+ 67976 string characters out of 5469834
+ 454752 words of memory out of 5000000
+ 31127 multiletter control sequences out of 15000+600000
+ 759302 words of font info for 148 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 57i,8n,65p,1289b,271s stack positions out of 10000i,1000n,20000p,200000b,200000s
-<C:/Users/trung/AppData/Local/Programs/MiKTeX/fonts/type1/vntex/urwvn/utmb8v.pfb><C:/Users/trung/AppData/Local/Programs/MiKTeX/fonts/type1/vntex/urwvn/utmbi8v.pfb><C:/Users/trung/AppData/Local/Programs/MiKTeX/fonts/type1/vntex/urwvn/utmr8v.pfb><C:/Users/trung/AppData/Local/Programs/MiKTeX/fonts/type1/vntex/urwvn/utmri8v.pfb>
-Output written on TranHuynhTrungHieu_N21DCCN122.pdf (1 page, 97980 bytes).
+ 57i,10n,65p,1289b,350s stack positions out of 10000i,1000n,20000p,200000b,200000s
+<C:/Users/trung/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy7.pfb><C:/Users/trung/AppData/Local/Programs/MiKTeX/fonts/type1/vntex/urwvn/ucrr8v.pfb><C:/Users/trung/AppData/Local/Programs/MiKTeX/fonts/type1/vntex/urwvn/ucrro8v.pfb><C:/Users/trung/AppData/Local/Programs/MiKTeX/fonts/type1/vntex/urwvn/utmb8v.pfb><C:/Users/trung/AppData/Local/Programs/MiKTeX/fonts/type1/vntex/urwvn/utmbi8v.pfb><C:/Users/trung/AppData/Local/Programs/MiKTeX/fonts/type1/vntex/urwvn/utmr8v.pfb><C:/Users/trung/AppData/Local/Programs/MiKTeX/fonts/type1/vntex/urwvn/utmri8v.pfb>
+Output written on TranHuynhTrungHieu_N21DCCN122.pdf (6 pages, 176292 bytes).
 PDF statistics:
- 27 PDF objects out of 1000 (max. 8388607)
+ 57 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
  1 words of extra memory for PDF output out of 10000 (max. 10000000)
 

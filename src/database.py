@@ -1,97 +1,58 @@
 import sqlite3
 
-def connect_db():
-    return sqlite3.connect('audio_metadata.db')
+def init_db(db_path='audio_metadata.db'):
+    """
+    Initialize the SQLite database and create the table if it doesn't exist.
+    """
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+    
+    cursor.execute('''
+            CREATE TABLE IF NOT EXISTS Artists (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL UNIQUE
+        )
+    ''')
 
-def create_tables():
-    with connect_db() as conn:
-        cursor = conn.cursor()
-        cursor.execute('''
-            CREATE TABLE IF NOT EXISTS artists (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                name TEXT NOT NULL UNIQUE
-            );
-        ''')
-        cursor.execute('''
-            CREATE TABLE IF NOT EXISTS albums (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                name TEXT NOT NULL,
-                artist_id INTEGER,
-                FOREIGN KEY (artist_id) REFERENCES artists(id)
-            );
-        ''')
-        cursor.execute('''
-            CREATE TABLE IF NOT EXISTS tracks (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                title TEXT NOT NULL,
-                artist_id INTEGER,
-                album_id INTEGER,
-                genre TEXT,
-                duration INTEGER,
-                file_path TEXT NOT NULL,
-                FOREIGN KEY (artist_id) REFERENCES artists(id),
-                FOREIGN KEY (album_id) REFERENCES albums(id)
-            );
-        ''')
-        conn.commit()
+    cursor.execute('''
+            CREATE TABLE IF NOT EXISTS Genres (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL UNIQUE
+        )
+    ''')
 
-def insert_metadata(title, artist, album, genre, duration, file_path):
-    try:
-        with connect_db() as conn:
-            cursor = conn.cursor()
-            
-            # Kiểm tra xem artist đã tồn tại chưa
-            cursor.execute('SELECT id FROM artists WHERE name = ?', (artist,))
-            artist_row = cursor.fetchone()
-            if artist_row:
-                artist_id = artist_row[0]
-            else:
-                cursor.execute('INSERT INTO artists (name) VALUES (?)', (artist,))
-                artist_id = cursor.lastrowid
+    cursor.execute('''
+            CREATE TABLE IF NOT EXISTS Albums (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT,
+            release_year TEXT
+        )
+    ''')
 
-            # Kiểm tra xem album đã tồn tại chưa
-            cursor.execute('SELECT id FROM albums WHERE name = ? AND artist_id = ?', (album, artist_id))
-            album_row = cursor.fetchone()
-            if album_row:
-                album_id = album_row[0]
-            else:
-                cursor.execute('INSERT INTO albums (name, artist_id) VALUES (?, ?)', (album, artist_id))
-                album_id = cursor.lastrowid
+    cursor.execute('''
+            CREATE TABLE IF NOT EXISTS AudioFiles (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            file_path TEXT NOT NULL UNIQUE,
+            title TEXT,
+            album_id INTEGER,
+            genre_id INTEGER,
+            duration REAL,
+            FOREIGN KEY (album_id) REFERENCES Albums(id),
+            FOREIGN KEY (genre_id) REFERENCES Genres(id)
+        )
+    ''')
 
-            # Chèn track
-            cursor.execute('''
-                INSERT INTO tracks (title, artist_id, album_id, genre, duration, file_path)
-                VALUES (?, ?, ?, ?, ?, ?)
-            ''', (title, artist_id, album_id, genre, duration, file_path))
+    cursor.execute('''
+            CREATE TABLE IF NOT EXISTS AudioArtists (
+            audio_file_id INTEGER,
+            artist_id INTEGER,
+            PRIMARY KEY (audio_file_id, artist_id),
+            FOREIGN KEY (audio_file_id) REFERENCES AudioFiles(id),
+            FOREIGN KEY (artist_id) REFERENCES Artists(id)
+        )
+    ''')
 
-            conn.commit()
-    except sqlite3.Error as e:
-        print(f"Database error: {e}")
+    conn.commit()
+    conn.close()
+    print("Database initialized and tables created if they didn't exist.")
 
-def update_metadata(track_id, new_title, new_artist, new_album, new_genre):
-    try:
-        with connect_db() as conn:
-            cursor = conn.cursor()
-            
-            # Lấy artist_id và album_id từ track
-            cursor.execute('SELECT artist_id, album_id FROM tracks WHERE id = ?', (track_id,))
-            track = cursor.fetchone()
-            if not track:
-                print(f"Track with ID {track_id} not found.")
-                return
-            
-            artist_id, album_id = track
-
-            # Cập nhật track
-            cursor.execute('UPDATE tracks SET title = ?, genre = ? WHERE id = ?', 
-                         (new_title, new_genre, track_id))
-            
-            # Cập nhật artist
-            cursor.execute('UPDATE artists SET name = ? WHERE id = ?', (new_artist, artist_id))
-            
-            # Cập nhật album
-            cursor.execute('UPDATE albums SET name = ? WHERE id = ?', (new_album, album_id))
-
-            conn.commit()
-    except sqlite3.Error as e:
-        print(f"Database error: {e}")

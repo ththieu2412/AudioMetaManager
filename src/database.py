@@ -8,21 +8,21 @@ def init_db(db_path='audio_metadata.db'):
     cursor = conn.cursor()
     
     cursor.execute('''
-            CREATE TABLE IF NOT EXISTS Artists (
+            CREATE TABLE IF NOT EXISTS Artist (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL UNIQUE
         )
     ''')
 
     cursor.execute('''
-            CREATE TABLE IF NOT EXISTS Genres (
+            CREATE TABLE IF NOT EXISTS Genre (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL UNIQUE
         )
     ''')
 
     cursor.execute('''
-            CREATE TABLE IF NOT EXISTS Albums (
+            CREATE TABLE IF NOT EXISTS Album (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT,
             release_year TEXT
@@ -30,25 +30,25 @@ def init_db(db_path='audio_metadata.db'):
     ''')
 
     cursor.execute('''
-            CREATE TABLE IF NOT EXISTS AudioFiles (
+            CREATE TABLE IF NOT EXISTS AudioFile (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             file_path TEXT NOT NULL UNIQUE,
             title TEXT,
             album_id INTEGER,
             genre_id INTEGER,
             duration REAL,
-            FOREIGN KEY (album_id) REFERENCES Albums(id),
-            FOREIGN KEY (genre_id) REFERENCES Genres(id)
+            FOREIGN KEY (album_id) REFERENCES Album(id),
+            FOREIGN KEY (genre_id) REFERENCES Genre(id)
         )
     ''')
 
     cursor.execute('''
-            CREATE TABLE IF NOT EXISTS AudioArtists (
+            CREATE TABLE IF NOT EXISTS AudioArtist (
             audio_file_id INTEGER,
             artist_id INTEGER,
             PRIMARY KEY (audio_file_id, artist_id),
-            FOREIGN KEY (audio_file_id) REFERENCES AudioFiles(id),
-            FOREIGN KEY (artist_id) REFERENCES Artists(id)
+            FOREIGN KEY (audio_file_id) REFERENCES AudioFile(id),
+            FOREIGN KEY (artist_id) REFERENCES Artist(id)
         )
     ''')
 

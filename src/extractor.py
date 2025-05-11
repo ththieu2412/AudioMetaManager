@@ -51,7 +51,7 @@ def extract_metadata(file_path):
     
 if __name__ == "__main__":
     # Example usage
-    file_path = r"D:\Student\Senior_Student_2\multimedia\AudioMetaManager\samples\.flac\h1ub61y20a.flac"  # Replace with your file path
+    file_path = r"D:\Student\Senior_Student_2\multimedia\AudioMetaManager\samples\.flac\2vf69jdeu9.flac"  # Replace with your file path
     metadata = extract_metadata(file_path)
     if metadata:
         print(metadata)

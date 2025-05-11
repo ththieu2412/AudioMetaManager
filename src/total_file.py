@@ -9,6 +9,6 @@ def count_audio_files(folder_path):
     return count
 
 # Ví dụ sử dụng
-folder = r'../samples/.flac'  # Đường dẫn tới thư mục chứa file âm thanh
+folder = r'../samples/.ogg'  # Đường dẫn tới thư mục chứa file âm thanh
 total = count_audio_files(folder)
 print(f"Số lượng file âm thanh trong thư mục '{folder}': {total}")

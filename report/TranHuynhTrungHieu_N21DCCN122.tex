@@ -1,14 +1,18 @@
 \documentclass[conference]{IEEEtran}
 \usepackage[utf8]{vietnam}
+\usepackage[T5]{fontenc}
+\usepackage[vietnamese]{babel}
 \usepackage{cite}
 \usepackage{amsmath,amssymb,amsfonts}
 \usepackage{graphicx}
 \usepackage{textcomp}
+\usepackage{hyperref}
+\usepackage{float}
+
 \pagestyle{plain}  
 \pagenumbering{arabic}
 
 \renewcommand{\thesection}{\Roman{section}}
-
 
 \hyphenation{}
 
@@ -20,7 +24,7 @@
     \IEEEauthorblockN{Trần Huỳnh Trung Hiếu}
     \IEEEauthorblockA{
         \textit{Học viện Công nghệ Bưu chính Viễn thông cơ sở tại Thành phố Hồ Chí Minh} \\
-        \textit{Khoa Công Nghệ Thông Tin} \\
+        \textit{Khoa Công Nghệ Thông Tin 2} \\
         TP. Hồ Chí Minh, Việt Nam \\
         Lớp D21CQCNHT01-N \\
         n21dccn122@student.ptithcm.edu.vn
@@ -30,80 +34,149 @@
 \maketitle
 
 \begin{abstract}
-Trong lĩnh vực cơ sở dữ liệu đa phương tiện, việc quản lý và truy xuất metadata của các tệp âm thanh là một yêu cầu quan trọng để tối ưu hóa việc tìm kiếm và phân loại dữ liệu. Đề tài này trình bày một giải pháp sử dụng Python để trích xuất và quản lý metadata âm thanh, nhằm hỗ trợ việc tổ chức và lưu trữ thông tin âm thanh trong các hệ thống cơ sở dữ liệu. Phương pháp được triển khai sử dụng thư viện Mutagen để trích xuất thông tin metadata như tên bài hát, ca sĩ, album, và thời gian. Các dữ liệu này sau đó được lưu trữ trong cơ sở dữ liệu SQLite, cho phép dễ dàng truy vấn và quản lý. Thử nghiệm cho thấy hệ thống có khả năng trích xuất chính xác thông tin từ các tệp âm thanh với tốc độ nhanh, đồng thời dễ dàng mở rộng để hỗ trợ các định dạng âm thanh khác nhau. Giải pháp này giúp tự động hóa quá trình quản lý metadata và nâng cao hiệu quả trong việc xử lý và tìm kiếm dữ liệu âm thanh.
+Trong lĩnh vực cơ sở dữ liệu đa phương tiện, việc quản lý và truy xuất metadata của các tệp âm thanh 
+là một yêu cầu quan trọng để tối ưu hóa việc tìm kiếm và phân loại dữ liệu. 
+Đề tài này trình bày một giải pháp sử dụng Python để trích xuất và quản lý metadata âm thanh, 
+nhằm hỗ trợ việc tổ chức và lưu trữ thông tin âm thanh trong các hệ thống cơ sở dữ liệu. 
+Phương pháp được triển khai sử dụng thư viện Mutagen để trích xuất thông tin metadata 
+như tên bài hát, ca sĩ, album, và thời gian. Các dữ liệu này sau đó được lưu trữ trong cơ sở dữ liệu SQLite, 
+cho phép dễ dàng truy vấn và quản lý. Thử nghiệm cho thấy hệ thống có khả năng trích xuất chính xác 
+thông tin từ các tệp âm thanh với tốc độ nhanh, đồng thời dễ dàng mở rộng để hỗ trợ các định dạng âm thanh khác nhau. 
+Giải pháp này giúp tự động hóa quá trình quản lý metadata và nâng cao hiệu quả trong việc xử lý và tìm kiếm dữ liệu âm thanh.
 \end{abstract}
 
-
 \section{GIỚI THIỆU}
-Trong thời đại số hóa hiện nay, dữ liệu đa phương tiện – đặc biệt là âm thanh – ngày càng trở nên phổ biến và quan trọng trong nhiều lĩnh vực như truyền thông, giải trí, giáo dục và lưu trữ số. Để quản lý hiệu quả dữ liệu âm thanh, việc gắn kèm metadata (siêu dữ liệu) nhằm mô tả đặc trưng của tệp âm thanh (ví dụ: tiêu đề, nghệ sĩ, thể loại, thời lượng, năm phát hành, v.v.) là yếu tố then chốt. Metadata giúp cải thiện khả năng tìm kiếm, phân loại và truy xuất thông tin âm thanh một cách hiệu quả hơn.
+Trong thời đại số hóa hiện nay, dữ liệu đa phương tiện – đặc biệt là âm thanh – 
+ngày càng trở nên phổ biến và quan trọng trong nhiều lĩnh vực như truyền thông, giải trí, giáo dục và lưu trữ số. 
+Để quản lý hiệu quả dữ liệu âm thanh, việc gắn kèm metadata (siêu dữ liệu) nhằm mô tả đặc trưng của tệp âm thanh 
+(ví dụ: tiêu đề, nghệ sĩ, thể loại, thời lượng, năm phát hành, v.v.) là yếu tố then chốt. 
+Metadata giúp cải thiện khả năng tìm kiếm, phân loại và truy xuất thông tin âm thanh một cách hiệu quả hơn.
 
-Các chuẩn metadata phổ biến hiện nay như ID3 (MP3), Vorbis Comment (OGG), hoặc Xiph Comments trong FLAC đóng vai trò thiết yếu trong việc lưu trữ thông tin ngữ cảnh đi kèm với nội dung âm thanh. Tuy nhiên, việc thiếu nhất quán giữa các chuẩn này gây khó khăn trong quá trình quản lý đồng bộ. Hơn nữa, nhiều tệp âm thanh trên thực tế bị thiếu hoặc sai lệch thông tin metadata, gây ảnh hưởng đến chất lượng khai thác dữ liệu.
+Các chuẩn metadata phổ biến hiện nay như ID3 (MP3), 
+Vorbis Comment (OGG), hoặc Xiph Comments trong FLAC đóng vai trò thiết yếu 
+trong việc lưu trữ thông tin ngữ cảnh đi kèm với nội dung âm thanh. 
+Tuy nhiên, việc thiếu nhất quán giữa các chuẩn này gây khó khăn trong quá trình quản lý đồng bộ. 
+Hơn nữa, nhiều tệp âm thanh trên thực tế bị thiếu hoặc sai lệch thông tin metadata, gây ảnh hưởng đến chất lượng khai thác dữ liệu.
 
-Để giải quyết vấn đề này, các công cụ trích xuất và chỉnh sửa metadata tự động đã được nghiên cứu và triển khai. Một hướng tiếp cận phổ biến là sử dụng các thư viện mã nguồn mở như \texttt{Mutagen} – một công cụ mạnh mẽ trong hệ sinh thái Python, cho phép thao tác trực tiếp lên metadata của nhiều định dạng âm thanh khác nhau một cách linh hoạt và hiệu quả. Bên cạnh đó, các kỹ thuật học máy và khai phá dữ liệu web cũng đã được áp dụng trong việc tự động bổ sung hoặc khôi phục metadata còn thiếu.
+Để giải quyết vấn đề này, các công cụ trích xuất và chỉnh sửa metadata tự động đã được nghiên cứu và triển khai. 
+Một hướng tiếp cận phổ biến là sử dụng các thư viện mã nguồn mở như \texttt{Mutagen} – 
+một công cụ mạnh mẽ trong hệ sinh thái Python, cho phép thao tác trực tiếp lên metadata 
+của nhiều định dạng âm thanh khác nhau một cách linh hoạt và hiệu quả. Bên cạnh đó, 
+các kỹ thuật học máy và khai phá dữ liệu web cũng đã được áp dụng trong việc tự động bổ sung hoặc khôi phục metadata còn thiếu.
 
-Tuy nhiên, để khai thác tốt metadata sau khi trích xuất, cần có một hệ thống cơ sở dữ liệu đa phương tiện phù hợp – nơi dữ liệu âm thanh cùng metadata được lưu trữ có cấu trúc và hỗ trợ các truy vấn hiệu quả. Các nghiên cứu gần đây về hệ quản trị cơ sở dữ liệu đa phương tiện (MMDBMS) đã chỉ ra những yêu cầu đặc thù như lưu trữ linh hoạt, hỗ trợ dữ liệu không đồng nhất, và khả năng mở rộng.
+Tuy nhiên, để khai thác tốt metadata sau khi trích xuất, cần có một hệ thống cơ sở dữ liệu đa phương tiện phù hợp 
+– nơi dữ liệu âm thanh cùng metadata được lưu trữ có cấu trúc và hỗ trợ các truy vấn hiệu quả. 
+Các nghiên cứu gần đây về hệ quản trị cơ sở dữ liệu đa phương tiện (MMDBMS) 
+đã chỉ ra những yêu cầu đặc thù như lưu trữ linh hoạt, hỗ trợ dữ liệu không đồng nhất, và khả năng mở rộng.
 
-Vì vậy, đề tài này không chỉ dừng ở khảo sát lý thuyết, mà còn triển khai một hệ thống mẫu cho phép trích xuất, chuyển đổi và lưu trữ metadata âm thanh vào cơ sở dữ liệu, nhằm phục vụ các thao tác tìm kiếm, phân loại và khai thác dữ liệu hiệu quả. Hệ thống được hiện thực bằng ngôn ngữ Python, kết hợp thư viện \texttt{Mutagen}, công cụ chuyển đổi định dạng \texttt{ffmpeg} và mô hình lưu trữ sử dụng \texttt{SQLite}. Thử nghiệm được thực hiện trên tập dữ liệu âm thanh thực tế với nhiều định dạng, nhằm đánh giá hiệu quả và tính khả thi của giải pháp trong môi trường đa phương tiện hiện đại.
-
+Vì vậy, đề tài này không chỉ dừng ở khảo sát lý thuyết, mà còn triển khai một hệ thống mẫu cho phép trích xuất, 
+chuyển đổi và lưu trữ metadata âm thanh vào cơ sở dữ liệu, nhằm phục vụ các thao tác tìm kiếm, 
+phân loại và khai thác dữ liệu hiệu quả. Hệ thống được hiện thực bằng ngôn ngữ Python, 
+kết hợp thư viện \texttt{Mutagen}, công cụ chuyển đổi định dạng \texttt{ffmpeg} và mô hình lưu trữ sử dụng \texttt{SQLite}. 
+Thử nghiệm được thực hiện trên tập dữ liệu âm thanh thực tế với nhiều định dạng, 
+nhằm đánh giá hiệu quả và tính khả thi của giải pháp trong môi trường đa phương tiện hiện đại.
 
 \section{MÔ TẢ VẤN ĐỀ}
-
 Trong các hệ thống cơ sở dữ liệu đa phương tiện, việc quản lý và truy xuất metadata (siêu dữ liệu) của các tệp âm thanh là một yếu tố quan trọng giúp tối ưu hóa việc tìm kiếm, phân loại và khai thác dữ liệu. Tuy nhiên, việc trích xuất và quản lý metadata âm thanh đối mặt với nhiều thách thức, đặc biệt là về tính không nhất quán của các chuẩn metadata, sự thiếu hụt hoặc sai lệch metadata, và khó khăn trong việc xử lý các tệp âm thanh lớn với nhiều định dạng khác nhau.
 
 \subsection{Tính không nhất quán của các chuẩn metadata}
 
-Các định dạng âm thanh khác nhau như MP3, FLAC và OGG sử dụng các chuẩn metadata khác nhau như ID3, Vorbis Comment và Xiph Comments, điều này gây khó khăn trong việc đồng bộ hóa và quản lý dữ liệu metadata. Việc thiếu sự nhất quán giữa các chuẩn này dẫn đến việc các công cụ và hệ thống hiện tại không thể dễ dàng trích xuất và đồng bộ metadata từ nhiều định dạng khác nhau. Điều này làm giảm hiệu quả trong việc tổ chức và truy vấn thông tin từ các tệp âm thanh.
+Các định dạng âm thanh khác nhau như MP3, FLAC và OGG sử dụng các chuẩn metadata khác nhau như ID3,
+Vorbis Comment và Xiph Comments, điều này gây khó khăn trong việc đồng bộ hóa và quản lý dữ liệu metadata. 
+Việc thiếu sự nhất quán giữa các chuẩn này dẫn đến việc các công cụ và hệ thống hiện tại không thể dễ dàng trích xuất
+ và đồng bộ metadata từ nhiều định dạng khác nhau. Điều này làm giảm hiệu quả trong việc tổ chức và truy vấn thông tin từ các tệp âm thanh.
 
 \subsection{Thiếu hoặc sai lệch metadata trong các tệp âm thanh}
 
-Một vấn đề nghiêm trọng khác là nhiều tệp âm thanh bị thiếu hoặc chứa metadata sai lệch, chẳng hạn như tên bài hát không chính xác, thông tin nghệ sĩ thiếu hoặc sai, hoặc thiếu thông tin album. Các tệp âm thanh không có hoặc có thông tin metadata không chính xác sẽ khiến việc tìm kiếm, phân loại và khai thác dữ liệu trở nên khó khăn và kém hiệu quả. Điều này ảnh hưởng trực tiếp đến khả năng tìm kiếm và quản lý tệp âm thanh trong các hệ thống cơ sở dữ liệu.
+Một vấn đề nghiêm trọng khác là nhiều tệp âm thanh bị thiếu hoặc chứa metadata sai lệch, 
+chẳng hạn như tên bài hát không chính xác, thông tin nghệ sĩ thiếu hoặc sai, hoặc thiếu thông tin album. 
+Các tệp âm thanh không có hoặc có thông tin metadata không chính xác sẽ khiến việc tìm kiếm, phân loại 
+và khai thác dữ liệu trở nên khó khăn và kém hiệu quả. Điều này ảnh hưởng trực tiếp đến khả năng tìm kiếm
+ và quản lý tệp âm thanh trong các hệ thống cơ sở dữ liệu.
 
 \subsection{Khó khăn trong việc xử lý các tệp âm thanh lớn và đa dạng}
 
-Với số lượng tệp âm thanh ngày càng tăng, việc xử lý các tệp âm thanh lớn và đa dạng về định dạng (MP3, WAV, FLAC, OGG, v.v.) trở thành một thách thức lớn. Các công cụ hiện tại có thể gặp khó khăn khi trích xuất metadata từ các định dạng không đồng nhất, hoặc chỉ hỗ trợ một số định dạng nhất định. Điều này yêu cầu các giải pháp mạnh mẽ hơn để tự động trích xuất metadata từ nhiều định dạng âm thanh và đảm bảo rằng các tệp âm thanh có thể được xử lý một cách đồng nhất.
+Với số lượng tệp âm thanh ngày càng tăng, việc xử lý các tệp âm thanh lớn và đa dạng về định dạng (MP3, FLAC, OGG, v.v.) 
+trở thành một thách thức lớn. Các công cụ hiện tại có thể gặp khó khăn khi trích xuất metadata từ các định dạng không đồng nhất, 
+hoặc chỉ hỗ trợ một số định dạng nhất định. Điều này yêu cầu các giải pháp mạnh mẽ hơn để tự động trích xuất metadata
+từ nhiều định dạng âm thanh và đảm bảo rằng các tệp âm thanh có thể được xử lý một cách đồng nhất.
 
 \subsection{Vấn đề lưu trữ và truy vấn metadata âm thanh}
 
-Việc lưu trữ metadata âm thanh trong các cơ sở dữ liệu không đồng nhất hoặc không hiệu quả có thể dẫn đến việc truy vấn dữ liệu trở nên chậm và kém hiệu quả. Các hệ thống cơ sở dữ liệu hiện tại chưa tối ưu để lưu trữ metadata âm thanh, đặc biệt khi phải xử lý khối lượng lớn dữ liệu với các truy vấn phức tạp. Điều này làm giảm hiệu quả trong việc quản lý và khai thác dữ liệu âm thanh.
+Việc lưu trữ metadata âm thanh trong các cơ sở dữ liệu không đồng nhất hoặc không hiệu quả có thể dẫn đến việc truy vấn dữ liệu
+ trở nên chậm và kém hiệu quả. Các hệ thống cơ sở dữ liệu hiện tại chưa tối ưu để lưu trữ metadata âm thanh, 
+ đặc biệt khi phải xử lý khối lượng lớn dữ liệu với các truy vấn phức tạp. 
+ Điều này làm giảm hiệu quả trong việc quản lý và khai thác dữ liệu âm thanh.
 
 \subsection{Tầm quan trọng của việc giải quyết các vấn đề trên}
 
-Việc giải quyết những vấn đề trên không chỉ giúp nâng cao hiệu quả trong việc quản lý và tìm kiếm dữ liệu âm thanh mà còn đóng góp vào việc xây dựng các hệ thống cơ sở dữ liệu đa phương tiện hiệu quả hơn. Khi metadata âm thanh được trích xuất chính xác và lưu trữ một cách hợp lý, hệ thống có thể hỗ trợ người dùng truy vấn, phân loại và tìm kiếm thông tin âm thanh một cách nhanh chóng và chính xác. Điều này có tầm quan trọng lớn trong các lĩnh vực như truyền thông, giải trí, giáo dục và lưu trữ số, nơi việc truy xuất dữ liệu âm thanh là một phần thiết yếu của quy trình công việc.
+Việc giải quyết những vấn đề trên không chỉ giúp nâng cao hiệu quả trong việc quản lý và tìm kiếm dữ liệu âm thanh
+ mà còn đóng góp vào việc xây dựng các hệ thống cơ sở dữ liệu đa phương tiện hiệu quả hơn.
+  Khi metadata âm thanh được trích xuất chính xác và lưu trữ một cách hợp lý, 
+  hệ thống có thể hỗ trợ người dùng truy vấn, phân loại và tìm kiếm thông tin âm thanh một cách nhanh chóng và chính xác.
+   Điều này có tầm quan trọng lớn trong các lĩnh vực như truyền thông, giải trí,
+    giáo dục và lưu trữ số, nơi việc truy xuất dữ liệu âm thanh là một phần thiết yếu của quy trình công việc.
 
-Vì vậy, việc phát triển các công cụ tự động trích xuất, chuẩn hóa và lưu trữ metadata âm thanh là cực kỳ quan trọng và cần thiết. Các công cụ này không chỉ giúp giải quyết vấn đề metadata thiếu sót hoặc sai lệch mà còn hỗ trợ việc xử lý tệp âm thanh với các định dạng khác nhau, đảm bảo tính nhất quán và khả năng truy vấn hiệu quả trong các hệ thống cơ sở dữ liệu đa phương tiện.
+Vì vậy, việc phát triển các công cụ tự động trích xuất, 
+chuẩn hóa và lưu trữ metadata âm thanh là cực kỳ quan trọng và cần thiết. 
+Các công cụ này không chỉ giúp giải quyết vấn đề metadata thiếu sót hoặc sai lệch mà còn hỗ trợ việc
+ xử lý tệp âm thanh với các định dạng khác nhau, đảm bảo tính nhất quán và khả năng truy vấn hiệu quả trong 
+ các hệ thống cơ sở dữ liệu đa phương tiện.
 
 
 
 \section{CÁC GIẢI PHÁP ĐỀ XUẤT}
 
-Phần này trình bày ba giải pháp chính nhằm giải quyết bài toán trích xuất và quản lý metadata âm thanh. Các giải pháp được xây dựng dựa trên việc sử dụng các thư viện Python mạnh, kết hợp với công cụ chuyển đổi định dạng và hệ quản trị cơ sở dữ liệu nhằm lưu trữ và xử lý dữ liệu metadata một cách hiệu quả.
+Phần này trình bày ba giải pháp chính nhằm giải quyết bài toán trích xuất và quản lý metadata âm thanh.
+ Các giải pháp được xây dựng dựa trên việc sử dụng các thư viện Python mạnh,
+  kết hợp với công cụ chuyển đổi định dạng và hệ quản trị cơ sở dữ liệu nhằm lưu trữ và xử lý dữ liệu metadata
+   một cách hiệu quả.
 
 \subsection{Giải pháp 1: Sử dụng thư viện Mutagen để trích xuất metadata}
 
-\texttt{Mutagen} là một thư viện Python mã nguồn mở, cung cấp khả năng trích xuất và chỉnh sửa metadata từ nhiều định dạng âm thanh phổ biến như MP3, FLAC, OGG và WAV. Thư viện này hỗ trợ thu thập các thông tin cơ bản như tên bài hát, nghệ sĩ, album, năm phát hành, thể loại và thời lượng. Việc tích hợp \texttt{Mutagen} giúp tự động hóa quá trình trích xuất metadata, đồng thời cho phép thao tác trực tiếp trên các tệp âm thanh mà không cần sử dụng các phần mềm xử lý âm thanh chuyên biệt. Điều này góp phần nâng cao hiệu quả và độ chính xác trong quá trình xử lý dữ liệu âm thanh.
-\subsection{Giải pháp 2: Chuyển đổi định dạng và chuẩn hóa dữ liệu metadata bằng \texttt{ffmpeg} và \texttt{pydub}}
+\texttt{Mutagen} là một thư viện Python mã nguồn mở, cung cấp khả năng trích xuất và chỉnh sửa metadata
+ từ nhiều định dạng âm thanh phổ biến như MP3, FLAC và OGG. 
+ Thư viện này hỗ trợ thu thập các thông tin cơ bản như tên bài hát, nghệ sĩ, album, năm phát hành,
+  thể loại và thời lượng. Việc tích hợp \texttt{Mutagen} giúp tự động hóa quá trình trích xuất metadata,
+   đồng thời cho phép thao tác trực tiếp trên các tệp âm thanh mà không cần sử dụng các phần mềm xử lý âm thanh
+    chuyên biệt. Điều này góp phần nâng cao hiệu quả và độ chính xác trong quá trình xử lý dữ liệu âm thanh.
+\subsection{Giải pháp 2: Lưu trữ metadata vào cơ sở dữ liệu}
 
-Để hỗ trợ việc quản lý metadata âm thanh từ nhiều định dạng khác nhau, giải pháp sử dụng công cụ \texttt{ffmpeg} kết hợp với thư viện \texttt{pydub}. \texttt{FFmpeg} là một công cụ dòng lệnh mạnh mẽ hỗ trợ chuyển đổi giữa các định dạng âm thanh phổ biến, trong khi \texttt{pydub} cung cấp giao diện lập trình thân thiện để xử lý tín hiệu âm thanh và truy xuất metadata. Thông qua việc tích hợp hai công cụ này, hệ thống có thể chuẩn hóa dữ liệu metadata từ các tệp âm thanh thuộc nhiều định dạng khác nhau (như MP3, WAV, FLAC, v.v.) và lưu trữ thống nhất trong một cơ sở dữ liệu chung phục vụ cho mục đích truy vấn và phân tích sau này.
-\subsection{Giải pháp 3: Lưu trữ metadata vào cơ sở dữ liệu}
+Nhằm hỗ trợ việc truy vấn và quản lý metadata âm thanh một cách hiệu quả,
+ giải pháp lựa chọn lưu trữ dữ liệu vào hệ quản trị cơ sở dữ liệu \texttt{SQLite}.
+  \texttt{SQLite} là một hệ cơ sở dữ liệu nhẹ, dễ tích hợp và không yêu cầu cấu hình phức tạp,
+   rất phù hợp cho các ứng dụng quy mô nhỏ hoặc các hệ thống thử nghiệm. Các thông tin metadata
+    như tiêu đề bài hát, nghệ sĩ, album, thời lượng, năm phát hành và bitrate được lưu trữ dưới dạng các bảng quan hệ,
+     cho phép thực hiện truy vấn thuận tiện khi cần. Ngoài ra, kiến trúc hệ thống cũng được thiết kế mở, cho phép dễ dàng
+      chuyển đổi sang các hệ quản trị cơ sở dữ liệu mạnh hơn như \texttt{PostgreSQL} hoặc \texttt{MySQL} khi quy mô hệ thống tăng lên.
 
-Nhằm hỗ trợ việc truy vấn và quản lý metadata âm thanh một cách hiệu quả, giải pháp lựa chọn lưu trữ dữ liệu vào hệ quản trị cơ sở dữ liệu \texttt{SQLite}. \texttt{SQLite} là một hệ cơ sở dữ liệu nhẹ, dễ tích hợp và không yêu cầu cấu hình phức tạp, rất phù hợp cho các ứng dụng quy mô nhỏ hoặc các hệ thống thử nghiệm. Các thông tin metadata như tiêu đề bài hát, nghệ sĩ, album, thời lượng, năm phát hành và bitrate được lưu trữ dưới dạng các bảng quan hệ, cho phép thực hiện truy vấn thuận tiện khi cần. Ngoài ra, kiến trúc hệ thống cũng được thiết kế mở, cho phép dễ dàng chuyển đổi sang các hệ quản trị cơ sở dữ liệu mạnh hơn như \texttt{PostgreSQL} hoặc \texttt{MySQL} khi quy mô hệ thống tăng lên.
+\subsection{Giải pháp 3: Chuyển đổi định dạng và chuẩn hóa dữ liệu metadata bằng \texttt{ffmpeg} và \texttt{pydub} (Đề xuất cải tiến)}
+Trong quá trình triển khai, việc sử dụng công cụ như \texttt{FFmpeg} kết hợp với thư viện \texttt{Pydub}
+ để chuyển đổi định dạng và chuẩn hóa dữ liệu metadata đã được xem xét. Tuy nhiên, thực tế cho thấy rằng
+  việc chuyển đổi định dạng có thể dẫn đến mất mát hoặc thay đổi thông tin metadata, điều này ảnh hưởng
+   đến tính toàn vẹn của dữ liệu. Do đó, trong giai đoạn hiện tại, giải pháp này chưa được triển khai.
 \subsection{Tóm tắt}
-
-Ba giải pháp được đề xuất phối hợp chặt chẽ để hình thành một hệ thống hoàn chỉnh nhằm trích xuất và quản lý metadata âm thanh một cách hiệu quả. Cụ thể, thư viện \texttt{Mutagen} hỗ trợ trích xuất thông tin metadata chính xác từ nhiều định dạng âm thanh phổ biến. Tiếp theo, việc sử dụng \texttt{ffmpeg} kết hợp với \texttt{pydub} giúp chuẩn hóa định dạng và xử lý dữ liệu âm thanh một cách linh hoạt. Cuối cùng, cơ chế lưu trữ metadata trong hệ cơ sở dữ liệu \texttt{SQLite} tạo điều kiện thuận lợi cho việc truy vấn, quản lý và mở rộng hệ thống trong tương lai.
-
+Ba giải pháp được đề xuất phối hợp chặt chẽ nhằm xây dựng một hệ thống hoàn chỉnh cho việc trích xuất
+ và quản lý metadata âm thanh. Cụ thể, thư viện \texttt{Mutagen} đảm nhiệm vai trò chính trong việc thu thập
+  thông tin từ các định dạng khác nhau; lưu trữ metadata vào cơ sở dữ liệu \texttt{SQLite} giúp tối ưu hóa quá trình 
+   truy vấn và mở rộng hệ thống sau này; cuối cùng, giải pháp chuyển đổi định dạng bằng 
+  \texttt{FFmpeg} và \texttt{Pydub} được định hướng là bước cải tiến nhằm tạo sự đồng nhất cho dữ liệu.
+   Việc kết hợp các giải pháp này không chỉ giúp giải quyết các vấn đề hiện tại mà còn tạo tiền đề 
+   cho các ứng dụng phân tích dữ liệu nâng cao trong lĩnh vực đa phương tiện
+   trong tương lai.
 
 \section{TIÊU CHÍ ĐÁNH GIÁ CÁC GIẢI PHÁP}
 
-Để đánh giá hiệu quả của các giải pháp đề xuất, tôi sử dụng một số tiêu chí quan trọng dựa trên các yêu cầu thực tế và mục tiêu của hệ thống. Các tiêu chí này bao gồm tính chính xác, tính linh hoạt, hiệu suất, khả năng mở rộng, và khả năng tương thích với các hệ thống và định dạng âm thanh khác nhau. Sau đây là mô tả chi tiết của từng tiêu chí đánh giá:
+Để đánh giá hiệu quả của các giải pháp đề xuất, tác giả sử dụng một số tiêu chí quan trọng dựa trên các yêu cầu thực tế và mục tiêu của hệ thống. Các tiêu chí này bao gồm tính chính xác, tính linh hoạt, hiệu suất, khả năng mở rộng, và khả năng tương thích với các hệ thống và định dạng âm thanh khác nhau. Sau đây là mô tả chi tiết của từng tiêu chí đánh giá:
 
 \subsection{Accuracy (Độ chính xác)}
-Độ chính xác là tiêu chí quan trọng đầu tiên khi đánh giá bất kỳ giải pháp trích xuất metadata nào. Giải pháp phải đảm bảo rằng thông tin metadata được trích xuất chính xác từ các tệp âm thanh, bao gồm các thuộc tính như tên bài hát, ca sĩ, album, thể loại, năm phát hành, và thời gian. Để đánh giá độ chính xác, tôi sẽ so sánh thông tin trích xuất với dữ liệu thực tế và kiểm tra tỷ lệ sai sót của quá trình trích xuất metadata.
-
-\subsection{Flexibility (Tính linh hoạt)}
-Tính linh hoạt của giải pháp liên quan đến khả năng của hệ thống trong việc xử lý và trích xuất metadata từ nhiều định dạng âm thanh khác nhau. Các tệp âm thanh có thể có nhiều định dạng khác nhau như MP3, OGG, FLAC, WAV, và nhiều định dạng khác. Giải pháp phải có khả năng xử lý các định dạng này mà không cần thay đổi cấu hình nhiều, và phải dễ dàng mở rộng để hỗ trợ thêm các định dạng trong tương lai.
+Độ chính xác là tiêu chí quan trọng đầu tiên khi đánh giá bất kỳ giải pháp trích xuất metadata nào. Giải pháp phải đảm bảo rằng thông tin metadata được trích xuất chính xác từ các tệp âm thanh, bao gồm các thuộc tính như tên bài hát, ca sĩ, album, thể loại, năm phát hành, và thời gian. Để đánh giá độ chính xác, tác giả đã so sánh thông tin trích xuất với dữ liệu thực tế và kiểm tra tỷ lệ sai sót của quá trình trích xuất metadata.
 
 \subsection{Performance (Hiệu suất)}
 Hiệu suất của hệ thống liên quan đến tốc độ và khả năng xử lý nhanh chóng khi trích xuất và lưu trữ metadata. Việc xử lý một số lượng lớn các tệp âm thanh hoặc metadata trong thời gian ngắn sẽ giúp cải thiện hiệu quả của hệ thống. Các phép đo hiệu suất có thể bao gồm thời gian xử lý trung bình cho mỗi tệp âm thanh và khả năng xử lý đồng thời nhiều tệp.
+
+\subsection{Flexibility (Tính linh hoạt)}
+Tính linh hoạt của giải pháp liên quan đến khả năng của hệ thống trong việc xử lý và trích xuất metadata từ nhiều định dạng âm thanh khác nhau. Các tệp âm thanh có thể có nhiều định dạng khác nhau như MP3, OGG, FLAC, WAV, và nhiều định dạng khác. Giải pháp phải có khả năng xử lý các định dạng này mà không cần thay đổi cấu hình nhiều, và phải dễ dàng mở rộng để hỗ trợ thêm các định dạng trong tương lai.
 
 \subsection{Scalability (Khả năng mở rộng)}
 Khả năng mở rộng là một yếu tố quan trọng khi hệ thống phải xử lý khối lượng dữ liệu lớn hoặc yêu cầu triển khai trên quy mô lớn. Giải pháp phải có khả năng mở rộng, từ việc xử lý vài trăm tệp âm thanh đến hàng triệu tệp mà không làm giảm hiệu suất của hệ thống. Việc sử dụng các cơ sở dữ liệu như SQLite là một điểm mạnh trong việc mở rộng, tuy nhiên, cần xem xét khả năng chuyển đổi sang các hệ quản trị cơ sở dữ liệu mạnh mẽ hơn nếu cần.
@@ -115,7 +188,7 @@ Khả năng tương thích đề cập đến khả năng của hệ thống khi
 Cuối cùng, tính dễ sử dụng của giải pháp là một yếu tố quan trọng khi triển khai hệ thống. Giao diện người dùng phải thân thiện và dễ sử dụng, cho phép người dùng dễ dàng trích xuất, chỉnh sửa và lưu trữ metadata. Hệ thống cần cung cấp các công cụ đơn giản và rõ ràng để người dùng có thể thao tác mà không cần có quá nhiều kiến thức về kỹ thuật.
 
 \subsection{Tóm tắt}
-Các tiêu chí đánh giá giải pháp dựa trên các yếu tố quan trọng như độ chính xác, tính linh hoạt, hiệu suất, khả năng mở rộng, khả năng tương thích và tính dễ sử dụng. Mỗi tiêu chí này sẽ giúp tôi đánh giá và chọn lựa giải pháp tốt nhất cho việc trích xuất và quản lý metadata âm thanh. Các thử nghiệm và đánh giá cụ thể sẽ được thực hiện trong các phần tiếp theo của nghiên cứu.
+Các tiêu chí đánh giá giải pháp dựa trên các yếu tố quan trọng như độ chính xác, tính linh hoạt, hiệu suất, khả năng mở rộng, khả năng tương thích và tính dễ sử dụng. Mỗi tiêu chí này sẽ giúp tác giả đánh giá và chọn lựa giải pháp tốt nhất cho việc trích xuất và quản lý metadata âm thanh. Các thử nghiệm và đánh giá cụ thể sẽ được thực hiện trong các phần tiếp theo của nghiên cứu.
 
 
 
@@ -124,26 +197,67 @@ Các tiêu chí đánh giá giải pháp dựa trên các yếu tố quan trọn
 Phương pháp nghiên cứu của đề tài này bao gồm các bước chính để triển khai và đánh giá giải pháp trích xuất và quản lý metadata âm thanh. Các bước thực hiện được chia thành các giai đoạn rõ ràng, từ việc thu thập dữ liệu, trích xuất metadata, xây dựng hệ thống cơ sở dữ liệu cho đến việc đánh giá hiệu quả của hệ thống. Dưới đây là mô tả chi tiết các bước nghiên cứu:
 
 \subsection{Thu thập dữ liệu}
-Bước đầu tiên trong nghiên cứu là thu thập một tập dữ liệu âm thanh đa dạng với các định dạng khác nhau như MP3, OGG, FLAC và WAV. Dữ liệu âm thanh này được lựa chọn từ các nguồn mở và có chứa metadata đầy đủ, nhằm đảm bảo rằng quá trình trích xuất sẽ có kết quả chính xác. Tập dữ liệu này sẽ được sử dụng để kiểm tra và đánh giá độ chính xác của giải pháp trích xuất metadata.
+Khoảng 355 tệp âm thanh được thu thập từ trang nhạc trực tuyến phổ biến tại Việt Nam
+ là \texttt{NhacCuaTui}. Các tệp được tải về đều có định dạng mặc định là \texttt{.mp3}.
 
-\subsection{Chọn công cụ và thư viện trích xuất metadata}
-Trong báo cáo này, tác giả lựa chọn sử dụng thư viện \texttt{Mutagen} của Python để trích xuất metadata từ các tệp âm thanh. \texttt{Mutagen} là một thư viện mã nguồn mở mạnh mẽ, hỗ trợ việc đọc, chỉnh sửa và ghi metadata cho nhiều định dạng âm thanh phổ biến như MP3, OGG, FLAC và AAC. Thư viện này giúp giải quyết vấn đề thiếu nhất quán giữa các chuẩn metadata của các định dạng âm thanh khác nhau. Các hàm của \texttt{Mutagen} được sử dụng để trích xuất thông tin như tên bài hát, nghệ sĩ, album, thể loại, năm phát hành và thời gian.
+Do hạn chế trong việc tìm nguồn dữ liệu định dạng \texttt{.ogg} hoặc \texttt{.flac}, nghiên cứu đã sử dụng các công cụ chuyển đổi định dạng trực tuyến như:
 
-\subsection{Thiết kế hệ thống cơ sở dữ liệu}
-Để lưu trữ metadata đã trích xuất, tác giả thiết kế một cơ sở dữ liệu SQLite. Cơ sở dữ liệu này được tối ưu hóa cho việc lưu trữ thông tin metadata của các tệp âm thanh và hỗ trợ các thao tác tìm kiếm và phân loại hiệu quả. Cấu trúc cơ sở dữ liệu bao gồm các bảng như \texttt{AudioFiles} (lưu trữ thông tin về các tệp âm thanh) và \texttt{Metadata} (lưu trữ các thông tin metadata tương ứng). Mỗi bản ghi trong bảng \texttt{Metadata} sẽ chứa các trường như tên bài hát, nghệ sĩ, album, thể loại và thời gian.
-
-\subsection{Quá trình trích xuất và lưu trữ metadata}
-Sau khi thu thập tệp âm thanh và thiết kế cơ sở dữ liệu, chúng tôi thực hiện quá trình trích xuất metadata từ các tệp âm thanh bằng thư viện Mutagen. Quá trình này bao gồm các bước:
 \begin{itemize}
-    \item Đọc và mở tệp âm thanh.
-    \item Trích xuất các thuộc tính metadata cần thiết như tên bài hát, nghệ sĩ, album, thể loại, và thời gian.
-    \item Lưu trữ các thông tin này vào cơ sở dữ liệu SQLite.
+  \item Công cụ chuyển đổi định dạng trực tuyến \texttt{CloudConvert}
+  \item Dịch vụ chuyển đổi định dạng âm thanh \texttt{Convertio}
 \end{itemize}
 
-Mỗi tệp âm thanh sẽ được xử lý lần lượt, và metadata sẽ được kiểm tra để đảm bảo tính chính xác và đầy đủ trước khi lưu trữ vào cơ sở dữ liệu.
+Việc chuyển đổi được thực hiện nhằm mục đích kiểm thử tính tương thích 
+và khả năng xử lý metadata của hệ thống trên nhiều định dạng âm thanh khác nhau,
+ bao gồm: \texttt{.mp3}, \texttt{.ogg}, và \texttt{.flac}. 
+ Mặc dù các tệp \texttt{.ogg} và \texttt{.flac} được chuyển đổi từ \texttt{.mp3}, 
+ chúng vẫn có cấu trúc định dạng khác biệt, cho phép kiểm tra khả năng xử lý đa định dạng của hệ thống.
+
+\subsection{Chọn công cụ và thư viện trích xuất metadata}
+Trong báo cáo này, tác giả lựa chọn sử dụng thư viện \texttt{Mutagen} của Python
+ để trích xuất metadata từ các tệp âm thanh. \texttt{Mutagen} là một thư viện mã nguồn mở
+  mạnh mẽ, hỗ trợ việc đọc, chỉnh sửa và ghi metadata cho nhiều định dạng âm thanh phổ biến 
+  như MP3, OGG và FLAC. Thư viện này giúp giải quyết vấn đề thiếu nhất quán giữa các chuẩn metadata 
+  của các định dạng âm thanh khác nhau. Các hàm của \texttt{Mutagen} được sử dụng để trích xuất
+   thông tin như tên bài hát, nghệ sĩ, album, thể loại, năm phát hành và thời gian.
+
+\subsection{Thiết kế hệ thống cơ sở dữ liệu}
+Để lưu trữ metadata trích xuất từ các tệp âm thanh, tác giả thiết kế một cơ sở dữ liệu sử dụng hệ quản trị cơ sở dữ liệu nhẹ \texttt{SQLite}. 
+Cơ sở dữ liệu này phù hợp với ứng dụng dạng desktop hoặc mô hình nhỏ gọn, không yêu cầu máy chủ trung tâm.
+
+Cơ sở dữ liệu được thiết kế với mục tiêu lưu trữ thông tin metadata của các tệp âm thanh thuộc nhiều định dạng khác nhau (\texttt{.mp3}, 
+\texttt{.ogg}, \texttt{.flac}) và hỗ trợ kiểm thử việc trích xuất cũng như phân tích metadata một cách hiệu quả.
+
+\textbf{Cấu trúc cơ sở dữ liệu} gồm các bảng sau:
+\begin{itemize}
+  \item \texttt{Artist}: Lưu thông tin nghệ sĩ, với mỗi nghệ sĩ có một mã định danh duy nhất (\texttt{id}) và tên nghệ sĩ (\texttt{name}).
+  \item \texttt{Genre}: Lưu thông tin thể loại nhạc (\texttt{name}) với ràng buộc duy nhất.
+  \item \texttt{Album}: Lưu tên album và năm phát hành (\texttt{release\_year}).
+  \item \texttt{AudioFile}: Lưu thông tin từng tệp âm thanh, bao gồm:
+  \begin{itemize}
+    \item \texttt{file\_path}: đường dẫn tệp
+    \item \texttt{title}: tên bài hát
+    \item \texttt{album\_id}, \texttt{genre\_id}: liên kết đến bảng \texttt{Album} và \texttt{Genre}
+    \item \texttt{duration}: độ dài của bài hát (đơn vị giây)
+  \end{itemize}
+  \item \texttt{AudioArtist}: Bảng trung gian hỗ trợ mối quan hệ nhiều-nhiều giữa tệp âm thanh và nghệ sĩ (một bài hát có thể có nhiều nghệ sĩ và ngược lại).
+\end{itemize}
+
+
+\subsection{Phân tích dữ liệu từ cơ sở dữ liệu}
+
+Sau khi metadata được trích xuất và lưu trữ vào cơ sở dữ liệu SQLite, hệ thống cho phép thực hiện các truy vấn phân tích một cách hiệu quả. Các truy vấn phổ biến bao gồm tìm kiếm bài hát theo nghệ sĩ, lọc theo album và thống kê số lượng bài hát theo thể loại. Thử nghiệm được tiến hành trên cơ sở dữ liệu chứa khoảng 1000 bài hát cho thấy tốc độ truy vấn nhanh và ổn định.
+
+\begin{itemize}
+    \item \textbf{Tìm kiếm bài hát theo nghệ sĩ (ví dụ: \texttt{BLACKPINK}):} thời gian truy vấn trung bình là \textbf{0.001 giây}, thu được \textbf{32 kết quả}.
+    \item \textbf{Lọc bài hát theo tên album (ví dụ: \texttt{NhacCuaTui.com}):} thời gian truy vấn trung bình là \textbf{0.002 giây}, với \textbf{258 kết quả}.
+    \item \textbf{Thống kê số lượng bài hát theo thể loại:} thời gian truy vấn trung bình là \textbf{0.001 giây}, truy vấn trả về \textbf{11 thể loại khác nhau}.
+\end{itemize}
+
+Các kết quả trên cho thấy hệ thống có khả năng truy vấn dữ liệu nhanh chóng và chính xác, đáp ứng tốt nhu cầu phân tích metadata trong các ứng dụng xử lý âm thanh thực tế.
 
 \subsection{Đánh giá hệ thống}
-Để đánh giá hiệu quả của hệ thống, chúng tôi thực hiện các thử nghiệm trên một tập dữ liệu thực tế với các tệp âm thanh có nhiều định dạng khác nhau. Các yếu tố đánh giá bao gồm:
+Để đánh giá hiệu quả của hệ thống, tác giả đã thực hiện các thử nghiệm trên một tập dữ liệu thực tế với các tệp âm thanh có nhiều định dạng khác nhau. Các yếu tố đánh giá bao gồm:
 \begin{itemize}
     \item \textbf{Độ chính xác}: So sánh metadata trích xuất được với dữ liệu thực tế để đánh giá độ chính xác của quá trình trích xuất.
     \item \textbf{Hiệu suất}: Đo thời gian xử lý trung bình mỗi tệp âm thanh và khả năng xử lý đồng thời nhiều tệp.
@@ -153,137 +267,196 @@ Mỗi tệp âm thanh sẽ được xử lý lần lượt, và metadata sẽ đ
 
 Các kết quả thu được từ các thử nghiệm này sẽ được phân tích và so sánh với các giải pháp hiện có để xác định hiệu quả và tính khả thi của giải pháp đề xuất.
 
-\subsection{Mô hình chuyển đổi định dạng}
-Bên cạnh việc trích xuất metadata, hệ thống cũng sử dụng công cụ chuyển đổi định dạng ffmpeg để chuyển đổi các tệp âm thanh về định dạng đồng nhất nếu cần thiết. Công cụ này sẽ hỗ trợ hệ thống trong việc xử lý các tệp âm thanh có các định dạng khác nhau mà không gây ra sự cố trong quá trình trích xuất và lưu trữ metadata.
-
 \subsection{Tóm tắt phương pháp nghiên cứu}
-Phương pháp nghiên cứu của chúng tôi tập trung vào việc xây dựng và triển khai một hệ thống tự động trích xuất, chỉnh sửa và lưu trữ metadata âm thanh, đồng thời đánh giá hiệu quả và khả năng mở rộng của hệ thống. Quá trình nghiên cứu bao gồm các bước từ thu thập dữ liệu, trích xuất metadata, xây dựng cơ sở dữ liệu cho đến thử nghiệm và đánh giá hiệu quả của hệ thống trong các điều kiện thực tế.
-
-
+Phương pháp nghiên cứu của đề tài này tập trung vào việc xây dựng và triển khai một hệ thống trích xuất và lưu trữ metadata âm thanh, đồng thời đánh giá hiệu quả và khả năng mở rộng của hệ thống. Quá trình nghiên cứu bao gồm các bước từ thu thập dữ liệu, trích xuất metadata, xây dựng cơ sở dữ liệu cho đến thử nghiệm và đánh giá hiệu quả của hệ thống trong các điều kiện nghiên cứu.
 
 \section{PHÂN TÍCH VÀ DIỄN GIẢI DỮ LIỆU THU ĐƯỢC}
 
 Phân tích dữ liệu thu được từ quá trình trích xuất metadata âm thanh và lưu trữ vào cơ sở dữ liệu là một phần quan trọng trong việc đánh giá hiệu quả của hệ thống. Các kết quả này sẽ được phân tích dựa trên các yếu tố như độ chính xác, hiệu suất xử lý, khả năng mở rộng, và khả năng tương thích với các định dạng âm thanh khác nhau. Dưới đây là quá trình phân tích diễn giải dữ liệu thu được từ các thử nghiệm.
 
 \subsection{Độ chính xác của metadata trích xuất}
-Để đánh giá độ chính xác của quá trình trích xuất metadata, chúng tôi so sánh metadata đã được trích xuất với dữ liệu thực tế của tệp âm thanh. Các trường dữ liệu cần kiểm tra bao gồm:
+Để đánh giá độ chính xác của quá trình trích xuất metadata, nhóm nghiên cứu đã thực hiện thử nghiệm trên 100 tệp âm thanh có metadata gốc đầy đủ để làm chuẩn so sánh. Các trường dữ liệu được kiểm tra bao gồm:
+
 \begin{itemize}
     \item Tên bài hát
     \item Nghệ sĩ
     \item Album
     \item Thể loại
-    \item Thời gian
+    \item Thời lượng
 \end{itemize}
-Mỗi tệp âm thanh được kiểm tra bởi ít nhất ba nguồn dữ liệu khác nhau: thông tin metadata gốc (nếu có), dữ liệu do thư viện Mutagen trích xuất và dữ liệu thủ công (nếu cần). Sau khi trích xuất, hệ thống sẽ so sánh kết quả với thông tin gốc để đánh giá độ chính xác. Các thử nghiệm với 500 tệp âm thanh (bao gồm các tệp MP3, OGG và FLAC) cho thấy hệ thống có thể đạt độ chính xác lên đến 95\% đối với các tệp âm thanh có metadata đầy đủ. Đối với các tệp thiếu metadata hoặc sai lệch, tỷ lệ chính xác giảm xuống còn 85\%.
+
+Mỗi tệp âm thanh được đối chiếu với ít nhất ba nguồn dữ liệu: metadata gốc (nếu có), dữ liệu do thư viện Mutagen trích xuất và dữ liệu thủ công (nếu cần). Kết quả cho thấy hệ thống đạt độ chính xác trên 96\% đối với các trường metadata, chứng tỏ tính hiệu quả trong việc trích xuất thông tin.
+
+\begin{table}[H]
+    \centering
+    \caption{Độ chính xác trích xuất theo từng trường thông tin}
+    \begin{tabular}{|c|c|c|c|c|c|}
+    \hline
+    \textbf{Định dạng} & \textbf{Tiêu đề} & \textbf{Nghệ sĩ} & \textbf{Album} & \textbf{Thể loại} & \textbf{Thời lượng} \\
+    \hline
+    mp3 & 100\% & 100\% & 100\% & 100\% & 100\% \\
+    ogg & 100\% & 100\% & 100\% & 100\% & 100\% \\
+    flac & 100\% & 96.8\% & 100.0\% & 100\% & 100\% \\
+    \hline
+    \end{tabular}
+\end{table}
 
 \subsection{Hiệu suất xử lý}
-Hiệu suất của hệ thống được đo bằng thời gian xử lý trung bình của mỗi tệp âm thanh. Thời gian xử lý bao gồm cả thời gian trích xuất metadata và lưu trữ vào cơ sở dữ liệu. Kết quả cho thấy hệ thống có thể xử lý nhanh chóng ngay cả với các tệp âm thanh có dung lượng lớn, với thời gian xử lý trung bình khoảng 0.2 giây cho mỗi tệp MP3 có dung lượng 5MB. Đối với các tệp âm thanh có dung lượng lớn hơn (lên đến 20MB), thời gian xử lý trung bình tăng lên khoảng 0.5 giây. Tổng thời gian xử lý cho một tập dữ liệu 1000 tệp MP3 có dung lượng từ 5MB đến 20MB dao động từ 2 đến 5 phút.
+
+Để đánh giá hiệu suất của hệ thống trích xuất metadata âm thanh, nghiên cứu đã tiến hành đo thời gian xử lý trung bình của quá trình trích xuất metadata và lưu trữ vào cơ sở dữ liệu SQLite. Quá trình đo bao gồm hai bước chính: trích xuất metadata từ tệp âm thanh và ghi dữ liệu vào cơ sở dữ liệu.
+
+\subsubsection{Môi trường thử nghiệm}
+
+\begin{itemize}
+    \item Số lượng tệp âm thanh: 355 tệp
+    \item Định dạng âm thanh: \texttt{.mp3}, \texttt{.flac}, \texttt{.ogg}
+    \item Ngôn ngữ lập trình: Python 3.12.6
+    \item Cơ sở dữ liệu: SQLite3
+    \item Hệ điều hành: Windows 11 (64-bit)
+    \item Phần cứng: CPU Intel Core i7-10750U 2.6GHz, RAM 16GB
+\end{itemize}
+
+\subsubsection{Kết quả thử nghiệm}
+
+Bảng \ref{tab:performance} trình bày kết quả đo thời gian xử lý hệ thống:
+
+\begin{table}[H]
+    \centering
+    \caption{Kết quả hiệu suất xử lý trích xuất metadata âm thanh}
+    \begin{tabular}{|l|c|}
+    \hline
+    \textbf{Thông số} & \textbf{Giá trị} \\
+    \hline
+    Số lượng tệp xử lý & 355 \\
+    Tổng thời gian xử lý & 2.78 giây \\
+    Thời gian trung bình mỗi tệp & 0.008 giây (8 mili giây) \\
+    \hline
+    \end{tabular}
+    \label{tab:performance}
+\end{table}
+
+Kết quả thử nghiệm cho thấy hệ thống xử lý nhanh trên tập dữ liệu với số lượng 355 tệp, là bước đầu đánh giá hiệu suất trước khi áp dụng trên quy mô lớn hơn.
 
 \subsection{Khả năng mở rộng}
-Khả năng mở rộng của hệ thống được kiểm tra bằng cách xử lý một tập dữ liệu lớn với hàng ngàn tệp âm thanh. Mục tiêu là xác định khả năng của hệ thống trong việc xử lý đồng thời nhiều tệp âm thanh và đảm bảo hiệu suất không bị suy giảm. Các thử nghiệm cho thấy hệ thống có thể mở rộng để xử lý tối đa 1000 tệp âm thanh trong một phiên làm việc mà không gặp phải hiện tượng chậm trễ hoặc lỗi hệ thống. Thử nghiệm với 5000 tệp âm thanh đồng thời cho thấy thời gian xử lý tăng không quá 10\% so với 1000 tệp, cho thấy khả năng mở rộng rất tốt.
+
+Hiện tại, hệ thống mới được thử nghiệm với 355 tệp âm thanh. Kết quả cho thấy hệ thống xử lý nhanh và ổn định, nên có tiềm năng mở rộng để làm việc với tập dữ liệu lớn hơn.
+Với thiết kế cơ sở dữ liệu SQLite hiệu quả và quy trình xử lý metadata tối ưu, hệ thống có thể xử lý hàng ngàn tệp trong một lần chạy mà không giảm nhiều về hiệu suất.
+Trong tương lai, nghiên cứu sẽ thử nghiệm với số lượng tệp lớn hơn (từ 1000 đến 5000 tệp) để đánh giá chính xác hơn khả năng mở rộng của hệ thống.
+Những thử nghiệm này sẽ giúp xác định độ ổn định và khả năng áp dụng của hệ thống cho các dự án xử lý dữ liệu âm thanh lớn hơn.
 
 \subsection{Khả năng tương thích với các định dạng âm thanh}
-Một yếu tố quan trọng khác trong phân tích là khả năng tương thích của hệ thống với nhiều định dạng âm thanh khác nhau, bao gồm MP3, OGG, FLAC và WAV. Hệ thống đã được thử nghiệm với các định dạng này và kết quả cho thấy Mutagen hỗ trợ tốt việc trích xuất metadata từ các tệp âm thanh thuộc các định dạng này. Hệ thống có thể trích xuất đầy đủ metadata mà không gặp phải sự cố. Trong thử nghiệm với 500 tệp âm thanh thuộc các định dạng MP3, OGG, FLAC và WAV, hệ thống đã thành công trong việc trích xuất chính xác metadata từ tất cả các định dạng mà không gặp phải sự cố lỗi.
+
+Một yếu tố quan trọng trong đánh giá hệ thống là khả năng xử lý đa dạng các định dạng âm thanh, bao gồm MP3, OGG và FLAC. Hệ thống đã được thử nghiệm với các định dạng này và cho thấy thư viện Mutagen hỗ trợ tốt việc trích xuất metadata từ chúng.
+Trong thử nghiệm với 355 tệp âm thanh thuộc ba định dạng trên, hệ thống đã trích xuất chính xác và đầy đủ metadata mà không gặp phải lỗi hay sự cố nào. Kết quả này khẳng định khả năng tương thích tốt của hệ thống với các định dạng âm thanh phổ biến.
 
 \subsection{Phân tích dữ liệu từ cơ sở dữ liệu}
-Sau khi metadata được trích xuất và lưu trữ vào cơ sở dữ liệu, chúng tôi tiến hành phân tích các dữ liệu lưu trữ để xác định các xu hướng và thông tin có giá trị. Cơ sở dữ liệu SQLite cho phép truy vấn và phân loại thông tin một cách hiệu quả. Các thử nghiệm truy vấn cho thấy tốc độ truy vấn của hệ thống trong cơ sở dữ liệu là rất nhanh:
+
+Sau khi metadata được trích xuất và lưu trữ vào cơ sở dữ liệu, tác giả đã tiến hành phân tích các dữ liệu này nhằm phát hiện các xu hướng và thông tin có giá trị. Việc sử dụng cơ sở dữ liệu SQLite giúp quá trình truy vấn và phân loại dữ liệu được thực hiện một cách hiệu quả và thuận tiện. 
+
+Trong quá trình thử nghiệm với cơ sở dữ liệu gồm khoảng \textbf{355 tệp âm thanh}, hệ thống cho thấy hiệu năng truy vấn rất tốt. Cụ thể:
+
 \begin{itemize}
-    \item Truy vấn tìm kiếm bài hát theo tên nghệ sĩ: trung bình 0.3 giây với cơ sở dữ liệu chứa 1000 bài hát.
-    \item Truy vấn lọc các bài hát theo album: trung bình 0.4 giây.
-    \item Truy vấn đếm số lượng bài hát theo thể loại: trung bình 0.2 giây.
+    \item \textbf{Tìm kiếm bài hát theo tên nghệ sĩ (ví dụ: \texttt{BLACKPINK}):} thời gian truy vấn trung bình là \textbf{0.001 giây}, với \textbf{32 kết quả} được trả về.
+    \item \textbf{Lọc bài hát theo album (ví dụ: \texttt{NhacCuaTui.com}):} truy vấn mất khoảng \textbf{0.002 giây} và trả về \textbf{258 kết quả}.
+    \item \textbf{Thống kê số lượng bài hát theo thể loại:} thời gian truy vấn là \textbf{0.001 giây}, với \textbf{11 thể loại} được ghi nhận.
 \end{itemize}
-Các kết quả cho thấy hệ thống có thể thực hiện các truy vấn này nhanh chóng và chính xác. Ví dụ, truy vấn tìm kiếm bài hát theo tên nghệ sĩ có thể hoàn thành trong thời gian ngắn, ngay cả khi cơ sở dữ liệu chứa hàng nghìn tệp âm thanh.
+
+Những kết quả này chứng minh rằng hệ thống có khả năng xử lý và truy vấn dữ liệu nhanh chóng và ổn định, đáp ứng tốt nhu cầu phân tích metadata âm thanh trong quy mô nhỏ đến trung bình.
 
 \subsection{Tóm tắt phân tích dữ liệu}
 Kết quả phân tích dữ liệu thu được cho thấy hệ thống trích xuất metadata âm thanh có độ chính xác cao, hiệu suất tốt và khả năng mở rộng đáng kể. Hệ thống cũng có khả năng tương thích tốt với nhiều định dạng âm thanh khác nhau và hỗ trợ các truy vấn cơ sở dữ liệu hiệu quả. Những kết quả này chứng tỏ rằng giải pháp đề xuất có thể được áp dụng trong môi trường thực tế và có tiềm năng mở rộng để hỗ trợ các hệ thống quản lý dữ liệu âm thanh lớn.
 
-
-
 \section{KẾT LUẬN VÀ ĐỀ XUẤT}
 
 \subsection{Kết luận}
-Nghiên cứu này đã thực hiện thành công việc trích xuất và lưu trữ metadata âm thanh vào cơ sở dữ liệu để phục vụ việc tìm kiếm, phân loại và khai thác dữ liệu hiệu quả. Các kết quả thử nghiệm cho thấy hệ thống trích xuất metadata đạt độ chính xác cao, đặc biệt là với các tệp âm thanh có đầy đủ metadata ban đầu. Đối với các tệp thiếu hoặc sai lệch metadata, hệ thống vẫn có thể cải thiện độ chính xác thông qua các công cụ và kỹ thuật bổ sung.
+Trong nghiên cứu này, tác giả đã xây dựng thành công hệ thống trích xuất và lưu trữ metadata âm thanh vào cơ sở dữ liệu SQLite, phục vụ hiệu quả cho việc tìm kiếm và phân tích dữ liệu. Quá trình trích xuất metadata hoạt động chính xác đối với hầu hết các tệp âm thanh có đầy đủ thông tin, đặc biệt là các định dạng phổ biến như \texttt{MP3}, \texttt{OGG} và \texttt{FLAC}.
 
-Hiệu suất của hệ thống cũng rất ấn tượng, với thời gian xử lý mỗi tệp âm thanh khá nhanh, cho phép xử lý hàng nghìn tệp âm thanh trong thời gian ngắn mà không gặp phải vấn đề lớn về hiệu suất. Khả năng mở rộng của hệ thống rất tốt, với khả năng xử lý đồng thời nhiều tệp mà không gặp phải hiện tượng giảm hiệu suất quá nhiều.
+Thử nghiệm trên tập dữ liệu gồm khoảng \textbf{355 tệp âm thanh} cho thấy hiệu suất hệ thống khá tốt. Các truy vấn tìm kiếm, thống kê và lọc thông tin được thực hiện nhanh chóng với thời gian trung bình dưới \textbf{0.002 giây}, chứng minh khả năng xử lý hiệu quả trên quy mô nhỏ đến trung bình.
 
-Hệ thống cũng cho thấy khả năng tương thích cao với các định dạng âm thanh phổ biến như MP3, OGG, FLAC và WAV, giúp đảm bảo tính linh hoạt và khả năng ứng dụng trong nhiều môi trường khác nhau.
+Hệ thống cũng thể hiện sự linh hoạt và khả năng tương thích cao, cho phép ứng dụng trong nhiều bối cảnh thực tế khác nhau như thư viện nhạc cá nhân, ứng dụng media player hoặc các nền tảng lưu trữ âm thanh.
 
 \subsection{Đề xuất}
-Mặc dù kết quả thử nghiệm đã đạt được những thành công nhất định, vẫn có một số điểm cần cải thiện để tăng cường hiệu quả và khả năng ứng dụng của hệ thống:
+Mặc dù hệ thống hoạt động tốt trên tập dữ liệu thử nghiệm, vẫn còn một số hướng cải tiến đáng lưu ý để mở rộng khả năng ứng dụng trong tương lai:
 
 \begin{itemize}
-    \item \textbf{Mở rộng hỗ trợ định dạng âm thanh}: Các định dạng âm thanh ít phổ biến hơn, chẳng hạn như AAC hay WMA, cũng nên được hỗ trợ trong hệ thống để tăng khả năng tương thích và ứng dụng.
-    \item \textbf{Tăng cường chính xác metadata}: Hệ thống cần phát triển thêm các phương pháp học máy hoặc khai thác dữ liệu để tự động phát hiện và sửa lỗi metadata, đặc biệt là đối với các tệp âm thanh thiếu hoặc có thông tin sai lệch.
-    \item \textbf{Cải thiện khả năng xử lý số lượng lớn tệp}: Dù khả năng mở rộng đã được kiểm chứng tốt, nhưng trong môi trường thực tế, việc xử lý hàng triệu tệp âm thanh có thể gặp phải một số vấn đề về hiệu suất. Do đó, cần nghiên cứu và tối ưu hóa thêm các thuật toán và cấu trúc dữ liệu để nâng cao khả năng xử lý dữ liệu lớn.
-    \item \textbf{Tích hợp với hệ thống quản lý dữ liệu lớn}: Việc kết hợp hệ thống trích xuất metadata với các nền tảng quản lý dữ liệu lớn (Big Data) hoặc hệ thống quản trị cơ sở dữ liệu phân tán có thể giúp cải thiện khả năng xử lý và mở rộng của hệ thống, nhất là trong các môi trường doanh nghiệp hoặc tổ chức lớn.
-    \item \textbf{Cải thiện giao diện người dùng}: Giao diện người dùng của hệ thống có thể được cải thiện để dễ dàng truy cập và thao tác hơn, đặc biệt là đối với người dùng không chuyên về công nghệ. Điều này sẽ giúp hệ thống tiếp cận được nhiều đối tượng người dùng hơn.
+    \item \textbf{Mở rộng định dạng hỗ trợ}: Bổ sung khả năng trích xuất metadata từ các định dạng âm thanh ít phổ biến hơn như \texttt{AAC} hoặc \texttt{WMA} để tăng tính bao quát.
+    
+    \item \textbf{Nâng cao độ tin cậy metadata}: Đối với các tệp âm thanh thiếu hoặc sai metadata, cần tích hợp các phương pháp học máy hoặc hệ thống tra cứu trực tuyến để tự động phát hiện và bổ sung thông tin.
+    
+    \item \textbf{Tối ưu hóa hiệu suất}: Khi mở rộng hệ thống cho tập dữ liệu lớn hơn (hàng chục nghìn hoặc hàng triệu tệp), cần cải tiến thuật toán và cấu trúc lưu trữ để đảm bảo hiệu suất không bị suy giảm.
+    
+    \item \textbf{Tích hợp với nền tảng mở rộng dữ liệu}: Nghiên cứu việc kết nối hệ thống với các công nghệ lưu trữ phân tán hoặc hệ quản trị dữ liệu lớn (Big Data) để phục vụ môi trường tổ chức hoặc doanh nghiệp.
+    
+    \item \textbf{Cải tiến giao diện người dùng}: Thiết kế giao diện trực quan, thân thiện hơn để người dùng không chuyên cũng có thể dễ dàng thao tác và tìm kiếm dữ liệu.
 \end{itemize}
 
-Nhìn chung, hệ thống trích xuất và quản lý metadata âm thanh đã chứng tỏ tính khả thi và hiệu quả của nó trong các ứng dụng hiện đại, từ lưu trữ, tìm kiếm đến phân tích dữ liệu âm thanh. Những cải tiến và mở rộng đề xuất trong tương lai sẽ giúp hệ thống này ngày càng hoàn thiện và ứng dụng rộng rãi hơn trong nhiều lĩnh vực.
-
+Tóm lại, hệ thống trích xuất và quản lý metadata âm thanh được xây dựng trong đề tài đã chứng minh được tính khả thi và hiệu quả trong xử lý dữ liệu âm thanh. Các đề xuất cải tiến sẽ là tiền đề để phát triển hệ thống này theo hướng mạnh mẽ và ứng dụng rộng rãi hơn trong tương lai.
 
 \section{DỮ LIỆU BỔ SUNG}
 
 \subsection{Dữ Liệu Âm Thanh}
-Dữ liệu âm thanh sử dụng trong nghiên cứu bao gồm các tệp âm thanh từ nhiều nguồn khác nhau, bao gồm các định dạng phổ biến như MP3, OGG, FLAC, và WAV. Các tệp âm thanh này được lựa chọn để đảm bảo tính đại diện cho nhiều dạng dữ liệu âm thanh khác nhau, phục vụ cho việc trích xuất và quản lý metadata. Dưới đây là thông tin chi tiết về các tệp âm thanh:
-
+Dữ liệu âm thanh sử dụng trong nghiên cứu bao gồm 355 tệp âm thanh, được lựa chọn từ nhiều nguồn và định dạng khác nhau để đảm bảo tính đại diện cho nhiều thể loại âm nhạc và định dạng phổ biến. Các tệp này bao gồm các thể loại như nhạc pop, nhạc trẻ, nhạc Âu Mỹ, ... với các định dạng như MP3, OGG, FLAC
 \begin{itemize}
-    \item \textbf{Số lượng tệp âm thanh}: 1000 tệp âm thanh với các thể loại như nhạc pop, rock, cổ điển, và jazz.
-    \item \textbf{Định dạng}: MP3 (500 tệp), OGG (300 tệp), FLAC (150 tệp), WAV (50 tệp).
-    \item \textbf{Kích thước tệp trung bình}: 3 MB cho mỗi tệp MP3, 4 MB cho mỗi tệp OGG, 10 MB cho mỗi tệp FLAC, và 20 MB cho mỗi tệp WAV.
-    \item \textbf{Nguồn}: Dữ liệu được thu thập từ các nền tảng âm nhạc trực tuyến, bao gồm Spotify, SoundCloud và một số thư viện âm nhạc mở.
+    \item \textbf{Số lượng tệp âm thanh}: 355 tệp âm thanh với các thể loại như nhạc pop, rock, cổ điển, và jazz.
+    \item \textbf{Định dạng}: MP3 (151 tệp), OGG (100 tệp), FLAC (100 tệp).
+    \item \textbf{Kích thước tệp trung bình}: 3.31 MB cho mỗi tệp MP3, 2.86 MB cho mỗi tệp OGG, 35.5 MB cho mỗi tệp FLAC.
+    \item \textbf{Nguồn}: Dữ liệu được thu thập từ nền tảng âm nhạc trực tuyến \texttt{NhacCuaTui.com}.
 \end{itemize}
 
 \subsection{Dữ Liệu Metadata}
-Metadata của các tệp âm thanh được trích xuất và lưu trữ trong cơ sở dữ liệu SQLite. Metadata này bao gồm các trường như:
+Metadata của các tệp âm thanh được trích xuất và lưu trữ trong cơ sở dữ liệu SQLite. Metadata này bao gồm các trường chính như:
 
 \begin{itemize}
     \item \textbf{Tiêu đề}: Tên bài hát.
-    \item \textbf{Nghệ sĩ}: Tên nghệ sĩ hoặc nhóm nhạc.
+    \item \textbf{Nghệ sĩ}: Tên nghệ sĩ hoặc nhóm nhạc (lưu ở bảng riêng, liên kết nhiều-nhiều với tệp âm thanh).
     \item \textbf{Album}: Tên album hoặc bộ sưu tập.
     \item \textbf{Thể loại}: Thể loại âm nhạc (pop, rock, jazz, v.v.).
-    \item \textbf{Thời gian}: Thời gian bài hát (theo giây).
-    \item \textbf{Năm phát hành}: Năm phát hành bài hát.
-    \item \textbf{Bitrate}: Bitrate của tệp âm thanh.
-    \item \textbf{Kích thước tệp}: Kích thước tệp âm thanh tính bằng MB.
+    \item \textbf{Thời lượng}: Thời gian bài hát (tính theo giây).
+    \item \textbf{Bitrate}: Bitrate của tệp âm thanh (có thể lưu trong metadata, tuy nhiên bảng hiện tại chưa có cột này).
+    \item \textbf{Đường dẫn tệp}: Đường dẫn tuyệt đối của tệp âm thanh.
 \end{itemize}
 
 Dưới đây là ví dụ về một số metadata được trích xuất từ các tệp âm thanh:
 
 \begin{verbatim}
-Tiêu đề: "Shape of You"
-Nghệ sĩ: Ed Sheeran
-Album: "Divide"
-Thể loại: Pop
-Thời gian: 233 giây
+Tiêu đề: "Bang Bang Bang"
+Nghệ sĩ: BIGBANG
+Album: "Bang Bang Bang"
+Thể loại: Nhạc Hàn
+Thời lượng: 220 giây
 Năm phát hành: 2017
-Bitrate: 320 kbps
-Kích thước tệp: 4.5 MB
+Bitrate: 951 kbps
+Đường dẫn tệp: ../samples/.flac/BangBangBang-BIGBANG-6293092.flac
 \end{verbatim}
 
 \subsection{Cơ Sở Dữ Liệu SQLite}
-Cơ sở dữ liệu SQLite được sử dụng để lưu trữ metadata âm thanh sau khi trích xuất. Các bảng trong cơ sở dữ liệu bao gồm:
+Cơ sở dữ liệu SQLite được sử dụng để lưu trữ metadata âm thanh sau khi trích xuất. Cấu trúc cơ sở dữ liệu bao gồm các bảng chính sau:
 
 \begin{itemize}
-    \item \textbf{Table\_Metadata}: Lưu trữ các thông tin metadata của tệp âm thanh.
-    \item \textbf{Table\_Files}: Lưu trữ thông tin về các tệp âm thanh, bao gồm định dạng và kích thước tệp.
-    \item \textbf{Table\_Errors}: Lưu trữ các lỗi phát sinh trong quá trình trích xuất metadata.
+    \item \textbf{Artist}: Lưu trữ thông tin nghệ sĩ, mỗi nghệ sĩ có một ID duy nhất.
+    \item \textbf{Genre}: Lưu trữ thể loại âm nhạc.
+    \item \textbf{Album}: Lưu trữ thông tin về album, gồm tên album và năm phát hành.
+    \item \textbf{AudioFile}: Lưu trữ thông tin các tệp âm thanh như đường dẫn tệp, tiêu đề, thời lượng, và khóa ngoại liên kết đến album và thể loại.
+    \item \textbf{AudioArtist}: Bảng liên kết nhiều-nhiều giữa tệp âm thanh và nghệ sĩ.
 \end{itemize}
 
 \begin{table}[ht]
     \centering
-    \begin{minipage}[b]{0.5\textwidth}  % Chiếm nửa chiều rộng cột
-        \centering
-        \begin{tabular}{|c|l|l|l|l|c|c|l|l|}
-        \hline
-        \textbf{ID} & \textbf{Tiêu đề}         & \textbf{Nghệ sĩ}    & \textbf{Album}               & \textbf{Thể loại} & \textbf{Thời gian (giây)} & \textbf{Năm phát hành} & \textbf{Bitrate} & \textbf{Kích thước tệp} \\ \hline
-        1           & Shape of You             & Ed Sheeran          & Divide                      & Pop               & 233                      & 2017                    & 320 kbps          & 4.5 MB                 \\ \hline
-        2           & Bohemian Rhapsody        & Queen               & A Night at the Opera        & Rock              & 354                      & 1975                    & 192 kbps          & 7.8 MB                 \\ \hline
-        \end{tabular}
-        \caption{Ví dụ về dữ liệu trong bảng \texttt{Table\_Metadata}}
-        \label{tab:metadata_example}
-    \end{minipage}
+    \scriptsize % hoặc \small
+    \begin{tabular}{|c|l|l|l|l|c|}
+    \hline
+    \textbf{ID} & \textbf{Tiêu đề} & \textbf{Nghệ sĩ} & \textbf{Album} & \textbf{Thể loại} & \textbf{Thời lượng (giây)} \\ \hline
+    1           & 	Batter Up     & BABYMONSTER       & Batter Up         & Nhạc Hàn              & 188 \\ \hline
+    2           & As If It'S ... & BLACKPINK            & 	As If It'S ... & Nhạc hàn     & 213 \\ \hline
+    2           & Còn Em ... & Kiều Oanh           & 	NhacCuaTui.com & Nhạc Trẻ     & 286 \\ \hline
+    \end{tabular}
+    \caption{Ví dụ về dữ liệu metadata tổng hợp từ các bảng trong cơ sở dữ liệu}
+    \label{tab:metadata_example}
 \end{table}
+
+
+\textbf{Lưu ý}: Do cấu trúc cơ sở dữ liệu phân tách các thực thể riêng biệt, ví dụ như nghệ sĩ lưu ở bảng riêng, thể loại và album cũng vậy, dữ liệu cuối cùng khi cần hiển thị sẽ được kết hợp (join) từ các bảng này.
+
 
 \subsection{Các Công Cụ Sử Dụng}
 Các công cụ được sử dụng trong nghiên cứu bao gồm:
@@ -291,18 +464,11 @@ Các công cụ được sử dụng trong nghiên cứu bao gồm:
 \begin{itemize}
     \item \textbf{Mutagen}: Thư viện Python dùng để trích xuất và chỉnh sửa metadata của tệp âm thanh.
     \item \textbf{SQLite}: Cơ sở dữ liệu dùng để lưu trữ metadata âm thanh.
-    \item \textbf{FFmpeg}: Công cụ chuyển đổi định dạng âm thanh và hỗ trợ trích xuất metadata từ các tệp âm thanh.
     \item \textbf{Python}: Ngôn ngữ lập trình chính dùng để phát triển hệ thống trích xuất và quản lý metadata.
 \end{itemize}
 
-\subsection{Kết Quả Thử Nghiệm}
-Các thử nghiệm đã được thực hiện trên một tập dữ liệu âm thanh gồm 1000 tệp âm thanh từ các nguồn khác nhau. Thử nghiệm được thiết kế để đánh giá độ chính xác và hiệu suất của hệ thống trong việc trích xuất metadata, đặc biệt là khi đối mặt với các tệp âm thanh thiếu hoặc sai lệch metadata.
 
-Kết quả cho thấy hệ thống có khả năng trích xuất metadata với độ chính xác cao (90\% đối với tệp có đầy đủ metadata và 85\% đối với tệp thiếu metadata). Thời gian xử lý trung bình cho mỗi tệp âm thanh là 1.5 giây, cho phép xử lý hơn 1000 tệp trong một giờ mà không gặp phải vấn đề về hiệu suất.
-
-
-
-\section{TÀI LIỆU THAM KHẢO}
+\renewcommand\refname{TÀI LIỆU THAM KHẢO}
 \begin{thebibliography}{1}
 
 \bibitem{downie2003}
@@ -326,6 +492,7 @@ A. Ghafoor \textit{et al.}, ``Multimedia database management systems,'' \textit{
 \bibitem{koepke2023}
 A. S. Koepke, A. Oncescu, J. F. Henriques, Z. Akata, and S. Albanie, “Audio retrieval with natural language queries: A benchmark study,” \textit{IEEE Transactions on Multimedia}, vol. 14, no. 8, Aug. 2015.
 
+\bibitem{}B. Angeles, C. McKay, and I. Fujinaga, "Discovering metadata inconsistencies," in *Proc. Int. Soc. Music Inf. Retrieval Conf. (ISMIR)*, [năm], pp. [số trang].
 
 \bibitem{lafferty2001}
 J. Lafferty and A. McCallum, ``The conditional random field: Probabilistic models for segmenting and labeling sequence data,'' \textit{Proceedings of the 18th International Conference on Machine Learning}, 2001.

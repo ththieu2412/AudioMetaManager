@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ song.title }} - Music Library</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .song-card { transition: box-shadow 0.2s ease; }
+        .song-card:hover { box-shadow: 0 10px 15px rgba(0,0,0,0.1); }
+        button:focus { outline: none; box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3); }
+        audio { width: 100%; max-width: 600px; margin: 0 auto; }
+        .error { color: #dc2626; text-align: center; }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans antialiased">
+    <!-- Header -->
+    <header class="bg-indigo-700 text-white p-4 sticky top-0 z-20 shadow-md">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-4">
+                <img src="https://via.placeholder.com/50" alt="Logo" class="h-12 w-12 rounded-full">
+                <h1 class="text-3xl font-bold tracking-tight">Music Library</h1>
+            </div>
+            <a href="/" class="bg-gray-200 text-gray-800 py-2 px-4 rounded-lg hover:bg-gray-300 transition"
+               aria-label="Quay lại thư viện">Quay lại thư viện</a>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto p-6">
+        <div class="bg-white rounded-lg shadow-md p-6 song-card max-w-2xl mx-auto">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-4">{{ song.title }}</h2>
+            <p class="text-gray-600 text-sm mb-2">Album: {{ song.album or 'N/A' }}</p>
+            <p class="text-gray-600 text-sm mb-2">Năm: {{ song.release_year or 'N/A' }}</p>
+            <p class="text-gray-600 text-sm mb-2">Thể loại: {{ song.genre or 'N/A' }}</p>
+            <p class="text-gray-600 text-sm mb-2">Thời lượng: {{ "%.2f"|format(song.duration) }} giây</p>
+            <p class="text-gray-600 text-sm mb-4">Nghệ sĩ: {{ song.artists_string or 'N/A' }}</p>
+            <audio id="audioPlayer" controls autoplay aria-label="Phát bài hát {{ song.title }}"
+                   on error="this.parentNode.querySelector('.error').style.display='block';">
+                <source src="/{{ song.file_path }}"
+                        type="{% if song.file_path.endswith('.mp3') %}audio/mpeg{% elif song.file_path.endswith('.ogg') %}audio/ogg{% elif song.file_path.endswith('.flac') %}audio/flac{% endif %}">
+                Your browser does not support the audio element.
+            </audio>
+            <p class="error hidden mt-2">Không thể phát bài hát này. Vui lòng thử lại.</p>
+        </div>
+    </main>
+</body>
+</html>

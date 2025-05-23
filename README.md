@@ -1,6 +1,13 @@
 # AudioMetaManager
 
-A Python project for extracting and managing audio metadata, designed for multimedia database systems.
+# 👨‍🎓 Thông tin sinh viên thực hiện
+
+- Họ và tên: Trần Huỳnh Trung Hiếu
+- MSSV: (Điền MSSV của bạn)
+- Lớp: D21CQCNHT01-N
+- Khoa: Công nghệ thông tin 2
+- Trường: Học viện Công nghệ Bưu chính Viễn thông cơ sở thành phố Hồ Chí Minh(PTIT)
+- Email liên hệ: n21dccn122@student.ptithcm.edu.vn
 
 ## 🎯 Features
 
@@ -19,6 +26,7 @@ cd AudioMetaManager
 ```
 
 Install required packages:
+
 ```bash
 pip install -r requirements.txt
 ```
@@ -40,6 +48,3 @@ This project was built based on academic papers and real-world Python libraries 
 ## 📜 License
 
 This project is licensed for educational use.
-
-
-

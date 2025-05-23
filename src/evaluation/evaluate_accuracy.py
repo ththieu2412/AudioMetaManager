@@ -1,6 +1,7 @@
 import csv
 import sqlite3
 import re
+from pathlib import Path
 
 def load_ground_truth(filepath):
     with open(filepath, newline='', encoding='utf-8') as f:
@@ -27,7 +28,7 @@ def load_extracted_from_db(format_ext, conn):
     metadata_list = []
     for row in rows:
         metadata_list.append({
-            'file_name': row[0].split('/')[-1] if '/' in row[0] else row[0].split('\\')[-1],
+            'file_name': Path(row[0]).name,
             'title': row[1] or '',
             'artist': row[2] or '',
             'album': row[3] or '',
@@ -37,9 +38,7 @@ def load_extracted_from_db(format_ext, conn):
     return metadata_list
 
 def normalize_artist_list(artist_str):
-    # Thay cả ; và , bằng dấu phẩy
     separators_fixed = re.sub(r'[;,]', ',', artist_str)
-    # Tách nghệ sĩ, loại bỏ khoảng trắng và chuẩn hóa thường
     return set(a.strip().lower().replace('-', ' ').replace('–', ' ') for a in separators_fixed.split(',') if a.strip())
 
 def compare_metadata(ground_truth, extracted, duration_tolerance=1):
@@ -88,14 +87,18 @@ def compare_metadata(ground_truth, extracted, duration_tolerance=1):
     return {field: round(correct[field] / total * 100, 1) if total else 0.0 for field in fields}
 
 if __name__ == '__main__':
-    db_path = r'D:\Student\Senior_Student_2\multimedia\AudioMetaManager\src\audio_metadata.db'
+    base_dir = Path(__file__).resolve().parent
+    db_path = base_dir.parent / 'src' / 'audio_metadata.db'
+    ground_truth_path = base_dir / 'ground_truth.csv'
+    result_path = base_dir / 'evaluation_result.csv'
+
     formats = ['mp3', 'ogg', 'flac']
     results = []
 
     conn = sqlite3.connect(db_path)
 
     for fmt in formats:
-        gt = load_ground_truth('ground_truth.csv')
+        gt = load_ground_truth(ground_truth_path)
         ex = load_extracted_from_db(fmt, conn)
         acc = compare_metadata(gt, ex)
         acc['format'] = fmt
@@ -103,7 +106,7 @@ if __name__ == '__main__':
 
     conn.close()
 
-    with open('evaluation_result.csv', 'w', newline='', encoding='utf-8') as f:
+    with open(result_path, 'w', newline='', encoding='utf-8') as f:
         writer = csv.DictWriter(f, fieldnames=['format', 'title', 'artist', 'album', 'genre', 'duration'])
         writer.writeheader()
         writer.writerows(results)

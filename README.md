@@ -16,12 +16,14 @@
 ## 📝 Mô tả chi tiết bài làm
 
 Dự án **AudioMetaManager** nhằm xây dựng một hệ thống đơn giản để trích xuất và quản lý siêu dữ liệu (metadata) từ các tệp âm thanh định dạng `.mp3`, `.flac` và `.ogg`. Hệ thống hỗ trợ:
+
 - Đọc thông tin tiêu đề, nghệ sĩ, album, thể loại,... từ tệp âm thanh.
 - Lưu trữ dữ liệu vào cơ sở dữ liệu SQLite để truy xuất, phân tích hoặc tích hợp với hệ cơ sở dữ liệu đa phương tiện.
 - Cấu trúc mã nguồn rõ ràng, dễ bảo trì và mở rộng.
 - Hỗ trợ chạy chương trình theo folder chứa nhiều tệp âm thanh.
 
 ### Các thư viện sử dụng:
+
 - `mutagen`: đọc metadata từ file âm thanh.
 - `sqlite3`: lưu trữ và truy xuất dữ liệu trong cơ sở dữ liệu nội bộ.
 - `os`: duyệt tệp và thư mục.
@@ -39,31 +41,35 @@ AudioMetaManager/
 │   |   ├── evaluate_query.py             # Tệp đánh giá hiệu suất truy vấn trong cơ sở dữ liệu
 │   |   ├── evaluation_result.csv         # Kết quả đánh giá độ chính xác khi trích xuất dữ liệu
 │   |   ├── ground_truth.py               # Tập dữ liệu metadata thực tế dùng để kiểm tra tính chính xác
-│   ├── templates                         
+│   ├── templates
 │   ├── app.py                            # Tệp chính để chạy giao diện chương trình chương trình
 │   ├── create_db.py                      # Tạo database lưu metadata
 │   ├── database_util.py                  # Hỗ trợ tương tác cơ sở dữ liệu
 │   ├── database.py                       # Định nghĩa cấu trúc cơ sở dữ liệu
 │   ├── extractor.py                      # Trích xuất metadata từ audio
 ├── requirements.txt                      # Danh sách thư viện cần cài đặt
-└── README.md                             # Tài liệu mô tả dự án 
+└── README.md                             # Tài liệu mô tả dự án
 ```
 
 ## 🛠️ Hướng dẫn cài đặt
 
 ### 1. Tải mã nguồn:
+
 ```bash
 git clone https://github.com/ththieu2412/AudioMetaManager.git
 cd AudioMetaManager
 ```
 
 ### 2. Cài đặt các thư viện cần thiết:
+
 ```bash
 pip install -requirements.txt
 ```
 
 ## 🧪 Ví dụ chạy chương trình
+
 ### 🎧 Đầu vào (Input)
+
 Các tệp âm thanh cần được trích xuất metadata, đặt trong thư mục samples/.
 
 Ví dụ tệp đầu vào:
@@ -75,23 +81,25 @@ samples/.ogg/sample3.ogg
 ```
 
 ### 📤 Đầu ra (Output)
+
 Một tệp cơ sở dữ liệu audio_metadata.db được tạo tự động trong thư mục src/.
 
 Cơ sở dữ liệu lưu trữ metadata được trích xuất từ các tệp âm thanh, bao gồm các thông tin sau:
 
-| Thông tin   | Mô tả                              |
-| ----------- | ---------------------------------- |
-| `title`     | Tên bài hát                        |
-| `artist`    | Nghệ sĩ                            |
-| `album`     | Tên album                          |
-| `genre`     | Thể loại âm nhạc                   |
-| `duration`  | Thời lượng bài hát (giây)          |
-| `file_path` | Đường dẫn gốc của tệp đầu vào      |
+| Thông tin   | Mô tả                         |
+| ----------- | ----------------------------- |
+| `title`     | Tên bài hát                   |
+| `artist`    | Nghệ sĩ                       |
+| `album`     | Tên album                     |
+| `genre`     | Thể loại âm nhạc              |
+| `duration`  | Thời lượng bài hát (giây)     |
+| `file_path` | Đường dẫn gốc của tệp đầu vào |
 
 ## 🚀 Hướng dẫn chạy chương trình
 
 **⚠️ Lưu ý: Các tệp .py trong thư mục src/ có sử dụng đường dẫn tương đối, vì vậy phải di chuyển vào thư mục src trước khi chạy để đảm bảo chương trình hoạt động đúng.**
-### 1. Tạo database:
+
+### 1. Tạo database và trích xuất metadata lưu vào database:
 
 ```bash
 cd src
@@ -106,10 +114,10 @@ python app.py
 ```
 
 Sau khi chạy, giao diện sẽ được phục vụ tại địa chỉ:
+
 ```bash
 http://127.0.0.1:5000
 ```
-
 
 ## 📊 Đánh giá (Evaluation)
 

@@ -27,15 +27,19 @@ Dự án **AudioMetaManager** nhằm xây dựng một hệ thống đơn giản
 - `os`: duyệt tệp và thư mục.
 
 ## 📁 Cấu trúc thư mục
+
+```bash
 AudioMetaManager/
-├── dóc/ #Thư mục chứa tài liệu tham khảo
-├── report/ #Thư mục chứa bài báo cáo viết bằng latex
-├── samples/ # Thư mục chứa các tệp metadata audio đầu vào
-├── src/ # Thư mục chứa mã nguồn chính
-│ ├── main.py # Tệp chính để chạy chương trình
-│ └── metadata_extractor.py # Module xử lý việc đọc và ghi metadata
-├── requirements.txt # Danh sách thư viện cần cài đặt
-└── README.md # Tài liệu mô tả dự án (file hiện tại)
+├── docs/                   # Thư mục chứa tài liệu tham khảo
+├── report/                 # Thư mục chứa bài báo cáo viết bằng LaTeX
+├── samples/                # Thư mục chứa các tệp metadata audio đầu vào
+├── src/                    # Thư mục chứa mã nguồn chính
+│   ├── main.py             # Tệp chính để chạy chương trình
+│   └── metadata_extractor.py  # Module xử lý việc đọc và ghi metadata
+├── requirements.txt        # Danh sách thư viện cần cài đặt
+└── README.md               # Tài liệu mô tả dự án (file hiện tại)
+
+
 ## 🛠️ Hướng dẫn cài đặt
 
 ### 1. Tải mã nguồn:

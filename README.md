@@ -90,25 +90,32 @@ Cơ sở dữ liệu lưu trữ metadata được trích xuất từ các tệp 
 
 ## 🚀 Hướng dẫn chạy chương trình
 
+**⚠️ Lưu ý: Các tệp .py trong thư mục src/ có sử dụng đường dẫn tương đối, vì vậy phải di chuyển vào thư mục src trước khi chạy để đảm bảo chương trình hoạt động đúng.**
 Tạo database:
 
 ```bash
-python src/create_db.py
+cd src
+python create_db.py
 ```
 
 Chạy giao diện với:
 
 ```bash
-python src/app.py
+cd src
+python app.py
 ```
 
 ## 📊 Đánh giá (Evaluation)
-Các chức năng đánh giá nằm trong thư mục src/evaluation/. Được chạy riêng biệt từ dòng lệnh, không tích hợp vào giao diện.
+
+Các chức năng đánh giá nằm trong thư mục src/evaluation/.
+**⚠️ Cần chuyển thư mục làm việc vào src/evaluation trước khi chạy, vì các script sử dụng đường dẫn tương đối.**
 
 ### 🔍 1. Kiểm tra độ chính xác khi trích xuất metadata
 
 ```bash
-python src/evaluation/evaluate_accuracy.py
+cd src/evaluation
+python evaluate_accuracy.py
+
 ```
 
 | 📌 Tệp này sẽ so sánh metadata trích xuất được với dữ liệu thực tế trong ground_truth.py và xuất kết quả ra evaluation_result.csv.
@@ -116,7 +123,8 @@ python src/evaluation/evaluate_accuracy.py
 ### ⚡ 2. Đánh giá hiệu suất truy vấn
 
 ```bash
-python src/evaluation/evaluate_query.py
+cd src/evaluation
+python evaluate_query.py
 ```
 
 | 📌 Tệp này đo thời gian thực thi các truy vấn thường dùng trên database metadata đã tạo.

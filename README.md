@@ -93,7 +93,7 @@ Cơ sở dữ liệu lưu trữ metadata được trích xuất từ các tệp 
 Tạo database:
 
 ```bash
-python src/create_database.py
+python src/create_db.py
 ```
 
 Chạy giao diện với:

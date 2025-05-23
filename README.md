@@ -45,7 +45,6 @@ AudioMetaManager/
 │   ├── database_util.py                  # Hỗ trợ tương tác cơ sở dữ liệu
 │   ├── database.py                       # Định nghĩa cấu trúc cơ sở dữ liệu
 │   ├── extractor.py                      # Trích xuất metadata từ audio
-│   └── metadata_extractor.py             # Module xử lý việc đọc và ghi metadata
 ├── requirements.txt                      # Danh sách thư viện cần cài đặt
 └── README.md                             # Tài liệu mô tả dự án 
 ```
@@ -54,7 +53,7 @@ AudioMetaManager/
 
 ### 1. Tải mã nguồn:
 ```bash
-git clone https://github.com/yourusername/AudioMetaManager.git
+git clone https://github.com/ththieu2412/AudioMetaManager.git
 cd AudioMetaManager
 ```
 
@@ -63,8 +62,8 @@ cd AudioMetaManager
 pip install -requirements.txt
 ```
 
-### 🧪 Ví dụ chạy chương trình
-#### 🎧 Đầu vào (Input)
+## 🧪 Ví dụ chạy chương trình
+### 🎧 Đầu vào (Input)
 Các tệp âm thanh cần được trích xuất metadata, đặt trong thư mục samples/.
 
 Ví dụ tệp đầu vào:
@@ -75,7 +74,7 @@ samples/.mp3/sample2.mp3
 samples/.ogg/sample3.ogg
 ```
 
-#### 📤 Đầu ra (Output)
+### 📤 Đầu ra (Output)
 Một tệp cơ sở dữ liệu audio_metadata.db được tạo tự động trong thư mục src/.
 
 Cơ sở dữ liệu lưu trữ metadata được trích xuất từ các tệp âm thanh, bao gồm các thông tin sau:

@@ -88,7 +88,7 @@ def compare_metadata(ground_truth, extracted, duration_tolerance=1):
 
 if __name__ == '__main__':
     base_dir = Path(__file__).resolve().parent
-    db_path = base_dir.parent / 'src' / 'audio_metadata.db'
+    db_path = base_dir.parent / 'audio_metadata.db'
     ground_truth_path = base_dir / 'ground_truth.csv'
     result_path = base_dir / 'evaluation_result.csv'
 

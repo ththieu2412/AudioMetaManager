@@ -91,19 +91,25 @@ Cơ sở dữ liệu lưu trữ metadata được trích xuất từ các tệp 
 ## 🚀 Hướng dẫn chạy chương trình
 
 **⚠️ Lưu ý: Các tệp .py trong thư mục src/ có sử dụng đường dẫn tương đối, vì vậy phải di chuyển vào thư mục src trước khi chạy để đảm bảo chương trình hoạt động đúng.**
-Tạo database:
+### 1. Tạo database:
 
 ```bash
 cd src
 python create_db.py
 ```
 
-Chạy giao diện với:
+### 2. Chạy giao diện web:
 
 ```bash
 cd src
 python app.py
 ```
+
+Sau khi chạy, giao diện sẽ được phục vụ tại địa chỉ:
+```bash
+http://127.0.0.1:5000
+```
+
 
 ## 📊 Đánh giá (Evaluation)
 
